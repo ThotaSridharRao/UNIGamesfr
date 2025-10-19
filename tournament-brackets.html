@@ -1,0 +1,3326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournament Brackets | Uni Games</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" type="image/png" href="ug.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #0f85d3;
+            --bg-dark: #0D0A1A;
+            --accent-secondary: #5D3FD3;
+            --panel: #161329;
+            --text-primary: #F0F0F0;
+            --text-secondary: rgba(240, 240, 240, 0.7);
+            --border-color: rgba(10, 250, 217, 0.2);
+            --ease: 0.3s ease;
+            --radius: 12px;
+        }
+
+        /* =========================MODERN NAVBAR STYLES========================= */
+        .nav-normal {
+            background: rgba(13, 10, 26, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 0.5rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+            transform: translateY(0);
+        }
+
+        .nav-normal.nav-hidden {
+            transform: translateY(-100%);
+        }
+
+        .nav-normal.nav-scrolled {
+            background: rgba(13, 10, 26, 0.3);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 80px;
+            width: auto;
+            margin: 0;
+            padding: 0;
+            display: block;
+        }
+
+        .nav-center {
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0;
+            list-style: none;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li {
+            position: relative;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            padding: 0.6rem 1.2rem;
+            display: block;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: white;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-request {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-secondary));
+            color: white;
+        }
+
+        .btn-request:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(15, 133, 211, 0.3);
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        #user-menu {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-secondary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .user-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .menu-icon {
+            width: 24px;
+            height: 20px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .menu-icon span {
+            width: 100%;
+            height: 2px;
+            background: white;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle.active .menu-icon span:nth-child(1) {
+            transform: rotate(45deg) translate(7px, 7px);
+        }
+
+        .menu-toggle.active .menu-icon span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active .menu-icon span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 968px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-center {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 85%;
+                max-width: 350px;
+                flex-direction: column;
+                background: rgba(15, 15, 15, 0.98);
+                backdrop-filter: blur(20px);
+                padding: 6rem 2rem 2rem;
+                gap: 0;
+                transition: right 0.3s ease;
+                border-left: 1px solid rgba(255, 255, 255, 0.1);
+                align-items: flex-start;
+                overflow-y: auto;
+            }
+
+            .nav-center.active {
+                right: 0;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                width: 100%;
+                gap: 0;
+            }
+
+            .nav-links li {
+                width: 100%;
+            }
+
+            .nav-links a {
+                padding: 1rem 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+                gap: 1rem;
+                margin-top: 2rem;
+                padding-top: 2rem;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .user-info {
+                width: 100%;
+                justify-content: center;
+            }
+
+            #user-menu {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                gap: 1rem;
+            }
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            padding-top: 80px;
+            /* Account for fixed navbar */
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .tournament-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-secondary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tournament-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            background: var(--panel);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+        }
+
+        .brackets-container {
+            background: var(--panel);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            overflow-x: auto;
+        }
+
+        .bracket-round {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-width: 250px;
+            margin-right: 2rem;
+        }
+
+        .bracket-match {
+            background: rgba(15, 133, 211, 0.1);
+            border: 1px solid var(--primary-color);
+            border-radius: var(--radius);
+            padding: 1rem;
+            position: relative;
+        }
+
+        .match-teams {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .team {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            transition: var(--ease);
+        }
+
+        .team.winner {
+            background: rgba(40, 167, 69, 0.2);
+            border: 1px solid #28a745;
+        }
+
+        .team.loser {
+            opacity: 0.6;
+        }
+
+        .team-name {
+            font-weight: 600;
+        }
+
+        .team-score {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .match-status {
+            text-align: center;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .rounds-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 2rem;
+            padding: 1rem 0;
+        }
+
+        .round-title {
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .no-brackets {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+
+
+
+
+        .participants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .participant-card {
+            background: var(--panel);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1rem;
+        }
+
+        .participant-card h4 {
+            margin: 0 0 0.5rem 0;
+            color: var(--primary-color);
+        }
+
+        .seed-number {
+            background: var(--accent-secondary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .matches-section {
+            margin-top: 3rem;
+        }
+
+        .match-table {
+            width: 100%;
+            background: var(--panel);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .match-table th,
+        .match-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .match-table th {
+            background: rgba(15, 133, 211, 0.1);
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .match-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .match-table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .match-number {
+            font-weight: 700;
+            color: var(--accent-secondary);
+        }
+
+        .vs-separator {
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin: 0 0.5rem;
+        }
+
+        .download-section {
+            background: var(--panel);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-secondary));
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--ease);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(15, 133, 211, 0.3);
+        }
+
+        .download-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .download-btn.admin-only {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            border: 1px solid #6c757d;
+        }
+
+        .download-btn.admin-only:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-registration-open {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            border: 1px solid #28a745;
+        }
+
+        .status-registration-closed {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border: 1px solid #ffc107;
+        }
+
+        .status-active {
+            background: rgba(15, 133, 211, 0.2);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        .status-completed {
+            background: rgba(108, 117, 125, 0.2);
+            color: #6c757d;
+            border: 1px solid #6c757d;
+        }
+
+        .round-section {
+            margin-bottom: 3rem;
+        }
+
+        .round-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-secondary));
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius) var(--radius) 0 0;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .tournament-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--panel);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Tournament Brackets Styling */
+        .stage-section {
+            margin-bottom: 3rem;
+        }
+
+        .stage-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-secondary));
+            color: white;
+            padding: 1.5rem;
+            border-radius: var(--radius) var(--radius) 0 0;
+            margin-bottom: 0;
+        }
+
+        .stage-header h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.3rem;
+        }
+
+        .stage-header p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .match-table-container {
+            background: var(--panel);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .match-table-header {
+            background: rgba(15, 133, 211, 0.1);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .match-table-header h5 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .match-count {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .match-header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .add-schedule-btn,
+        .delete-teams-btn {
+            background: var(--accent-secondary);
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: var(--ease);
+        }
+
+        .add-schedule-btn:hover {
+            background: #7c5fd3;
+            transform: scale(1.1);
+        }
+
+        .delete-teams-btn {
+            background: #dc3545;
+        }
+
+        .delete-teams-btn:hover {
+            background: #c82333;
+            transform: scale(1.1);
+        }
+
+        .delete-teams-btn.active {
+            background: #c82333;
+            box-shadow: 0 0 10px rgba(220, 53, 69, 0.5);
+        }
+
+        .team-delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: var(--ease);
+            margin-left: 0.5rem;
+        }
+
+        .team-delete-btn:hover {
+            background: #c82333;
+            transform: scale(1.1);
+        }
+
+        .match-table.delete-mode .team-delete-btn {
+            display: flex;
+        }
+
+        .match-table.delete-mode .delete-column {
+            display: table-cell !important;
+        }
+
+        /* Ensure delete buttons work with 6-column layout */
+        .match-table.delete-mode .team-delete-btn {
+            display: flex;
+        }
+
+        .match-table.delete-mode tr:hover {
+            background: rgba(220, 53, 69, 0.1);
+        }
+
+        .match-table.delete-mode {
+            border: 2px solid rgba(220, 53, 69, 0.3);
+        }
+
+        .match-table.delete-mode .match-table-header {
+            background: rgba(220, 53, 69, 0.1);
+        }
+
+        .team-delete-btn.removing {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .team-delete-btn.removing:hover {
+            background: #6c757d;
+            transform: none;
+        }
+
+        .match-schedule {
+            background: rgba(93, 63, 211, 0.2);
+            color: var(--accent-secondary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+
+        .match-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .match-table th,
+        .match-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .match-table th {
+            background: rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .match-table tr:hover {
+            background: rgba(15, 133, 211, 0.05);
+        }
+
+        .match-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Default table styling for finals (5-column layout) */
+        .match-table th:nth-child(1),
+        .match-table td:nth-child(1),
+        .match-table th:nth-child(3),
+        .match-table td:nth-child(3) {
+            width: 60px;
+            text-align: center;
+        }
+
+        .match-table th:nth-child(2),
+        .match-table td:nth-child(2),
+        .match-table th:nth-child(4),
+        .match-table td:nth-child(4) {
+            width: auto;
+            text-align: left;
+            min-width: 200px;
+        }
+
+        .match-table th:nth-child(5),
+        .match-table td:nth-child(5) {
+            width: auto;
+        }
+
+        /* Add border between the two sections for better visual separation */
+        .match-table th:nth-child(2),
+        .match-table td:nth-child(2) {
+            border-right: 2px solid var(--primary-color);
+            padding-right: 1rem;
+        }
+
+        /* Qualifier table 6-column layout styling - override for qualifier tables */
+        .match-table.qualifier-table th:nth-child(1),
+        .match-table.qualifier-table td:nth-child(1),
+        .match-table.qualifier-table th:nth-child(4),
+        .match-table.qualifier-table td:nth-child(4) {
+            width: 60px;
+            text-align: center;
+        }
+
+        .match-table.qualifier-table th:nth-child(2),
+        .match-table.qualifier-table td:nth-child(2),
+        .match-table.qualifier-table th:nth-child(5),
+        .match-table.qualifier-table td:nth-child(5) {
+            width: 180px;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .match-table.qualifier-table th:nth-child(3),
+        .match-table.qualifier-table td:nth-child(3),
+        .match-table.qualifier-table th:nth-child(6),
+        .match-table.qualifier-table td:nth-child(6) {
+            width: auto;
+            text-align: left;
+            min-width: 200px;
+        }
+
+        .match-table.qualifier-table th:nth-child(7),
+        .match-table.qualifier-table td:nth-child(7) {
+            width: auto;
+        }
+
+        /* Add border between the two sections for qualifier tables */
+        .match-table.qualifier-table th:nth-child(3),
+        .match-table.qualifier-table td:nth-child(3) {
+            border-right: 2px solid var(--primary-color);
+            padding-right: 1rem;
+        }
+
+        /* Reset border for finals table */
+        .match-table.qualifier-table th:nth-child(2),
+        .match-table.qualifier-table td:nth-child(2) {
+            border-right: none;
+            padding-right: inherit;
+        }
+
+        .match-number {
+            font-weight: 700;
+            color: var(--accent-secondary);
+            text-align: center;
+        }
+
+        .match-teams {
+            font-weight: 500;
+        }
+
+        .match-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            background: rgba(108, 117, 125, 0.2);
+            color: #6c757d;
+        }
+
+        .team-captain {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .qualifier-source {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .finalists-section {
+            margin-top: 3rem;
+        }
+
+        .finalists-table-container {
+            background: var(--panel);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .finalists-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .finalists-table th,
+        .finalists-table td {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .finalists-table th {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            font-weight: 700;
+        }
+
+        .finalist-rank {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .finalist-team {
+            font-weight: 600;
+        }
+
+        .finalist-prize {
+            font-weight: 600;
+            color: var(--accent-secondary);
+        }
+
+
+
+        /* Carousel Styles */
+        .qualifier-carousel {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .carousel-container {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .carousel-slides {
+            display: flex;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            flex-shrink: 0;
+        }
+
+        .carousel-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .carousel-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--ease);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .carousel-btn:hover:not(:disabled) {
+            background: var(--accent-secondary);
+            transform: translateY(-2px);
+        }
+
+        .carousel-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .carousel-indicator {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        /* Mobile Responsive Improvements */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            /* On mobile, reduce table padding for better fit */
+            .match-table th,
+            .match-table td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            /* Adjust column widths for mobile - finals table (5-column) */
+            .match-table th:nth-child(1),
+            .match-table td:nth-child(1),
+            .match-table th:nth-child(3),
+            .match-table td:nth-child(3) {
+                width: 40px;
+            }
+
+            /* Adjust column widths for mobile - qualifier table (6-column) */
+            .match-table.qualifier-table th:nth-child(1),
+            .match-table.qualifier-table td:nth-child(1),
+            .match-table.qualifier-table th:nth-child(4),
+            .match-table.qualifier-table td:nth-child(4) {
+                width: 40px;
+            }
+
+            /* Carousel mobile adjustments */
+            .carousel-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .carousel-btn i {
+                font-size: 0.75rem;
+            }
+
+            .carousel-indicator {
+                font-size: 0.85rem;
+            }
+
+            .carousel-controls {
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+
+            /* Stage header mobile adjustments */
+            .stage-header {
+                padding: 1rem;
+            }
+
+            .stage-header h4 {
+                font-size: 1.1rem;
+            }
+
+            .stage-header p {
+                font-size: 0.85rem;
+            }
+
+            /* Match table header mobile adjustments */
+            .match-table-header {
+                padding: 0.75rem 1rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .match-table-header h5 {
+                font-size: 0.95rem;
+            }
+
+            .match-header-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .match-count {
+                font-size: 0.75rem;
+                padding: 0.2rem 0.5rem;
+            }
+
+            .match-schedule {
+                font-size: 0.65rem;
+                padding: 0.15rem 0.4rem;
+            }
+
+            /* Brackets container mobile */
+            .brackets-container {
+                padding: 1rem;
+            }
+
+            /* Team names truncation on mobile */
+            .match-teams {
+                max-width: 150px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                position: relative;
+            }
+
+            /* Mobile delete button adjustments */
+            .team-delete-btn {
+                width: 18px;
+                height: 18px;
+                font-size: 0.6rem;
+            }
+
+            .match-table.delete-mode .match-teams {
+                max-width: 120px;
+                /* Reduce width when delete buttons are visible */
+            }
+        }
+
+        /* Confirmation Modal Styles */
+        .delete-confirmation-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: var(--panel);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            z-index: 1001;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #dc3545;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: var(--ease);
+        }
+
+        .modal-close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-body p {
+            margin: 0 0 1rem 0;
+            line-height: 1.5;
+        }
+
+        .warning-text {
+            color: #ffc107;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .cancel-btn {
+            background: var(--panel);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--ease);
+        }
+
+        .cancel-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .confirm-btn {
+            background: #dc3545;
+            border: 1px solid #dc3545;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--ease);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .confirm-btn:hover:not(:disabled) {
+            background: #c82333;
+            border-color: #c82333;
+        }
+
+        .confirm-btn:disabled {
+            background: #6c757d;
+            border-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        /* Extra small devices (phones < 480px) */
+        @media (max-width: 480px) {
+            .carousel-btn {
+                padding: 0.4rem 0.75rem;
+                font-size: 0.75rem;
+            }
+
+            .carousel-btn span {
+                display: none;
+                /* Hide "Previous" and "Next" text */
+            }
+
+            .carousel-indicator {
+                font-size: 0.75rem;
+            }
+
+            .match-table th,
+            .match-table td {
+                padding: 0.5rem 0.25rem;
+                font-size: 0.8rem;
+            }
+
+            .match-number {
+                font-size: 0.75rem;
+            }
+
+            .match-teams strong {
+                font-size: 0.85rem;
+            }
+
+            /* Reduce column widths further for finals table (5-column) */
+            .match-table th:nth-child(1),
+            .match-table td:nth-child(1),
+            .match-table th:nth-child(3),
+            .match-table td:nth-child(3) {
+                width: 30px;
+            }
+
+            .match-table th:nth-child(2),
+            .match-table td:nth-child(2),
+            .match-table th:nth-child(4),
+            .match-table td:nth-child(4) {
+                width: auto;
+                min-width: 120px;
+            }
+
+            /* Reduce column widths further for qualifier table (6-column) */
+            .match-table.qualifier-table th:nth-child(1),
+            .match-table.qualifier-table td:nth-child(1),
+            .match-table.qualifier-table th:nth-child(4),
+            .match-table.qualifier-table td:nth-child(4) {
+                width: 30px;
+            }
+
+            /* Adjust team name columns for mobile */
+            .match-table.qualifier-table th:nth-child(2),
+            .match-table.qualifier-table td:nth-child(2),
+            .match-table.qualifier-table th:nth-child(5),
+            .match-table.qualifier-table td:nth-child(5) {
+                width: 100px;
+                max-width: 100px;
+            }
+
+            /* Captain columns on mobile */
+            .match-table.qualifier-table th:nth-child(3),
+            .match-table.qualifier-table td:nth-child(3),
+            .match-table.qualifier-table th:nth-child(6),
+            .match-table.qualifier-table td:nth-child(6) {
+                width: auto;
+                min-width: 120px;
+            }
+
+            .brackets-container {
+                padding: 0.5rem;
+            }
+
+            /* Modal responsive adjustments */
+            .modal-content {
+                width: 95%;
+                margin: 1rem;
+            }
+
+            .modal-header,
+            .modal-body,
+            .modal-actions {
+                padding: 1rem;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .cancel-btn,
+            .confirm-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="nav-normal">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="ug.png" alt="Uni Games">
+            </a>
+            <div class="nav-center" id="normalNav">
+                <ul class="nav-links">
+                    <li><a href="tournaments.html">Tournaments</a></li>
+                    <li><a href="tournament-brackets.html">Brackets</a></li>
+                </ul>
+                <div class="auth-buttons" id="normalAuth">
+                    <div id="guest-menu">
+                        <a href="auth.html" class="btn btn-request">Join Us</a>
+                    </div>
+                    <div id="user-menu" style="display: none;">
+                        <div class="user-info">
+                            <div class="user-avatar" id="user-avatar">U</div>
+                            <span class="user-name" id="navbar-username">User</span>
+                        </div>
+                        <button class="btn btn-logout" onclick="handleLogout()">Logout</button>
+                    </div>
+                </div>
+            </div>
+            <button class="menu-toggle" id="normalMenuToggle">
+                <div class="menu-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <div class="header">
+            <h1 class="tournament-title" id="tournament-title">Loading Tournament...</h1>
+            <div class="tournament-info" id="tournament-info">
+                <!-- Tournament info will be loaded here -->
+            </div>
+        </div>
+
+
+
+        <div class="tournament-stats" id="tournament-stats" style="display: none;">
+            <!-- Tournament statistics will be loaded here -->
+        </div>
+
+        <div class="brackets-container" id="brackets-container">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading tournament brackets...</p>
+            </div>
+        </div>
+
+        <div class="download-section" id="download-section" style="display: none;">
+            <h3><i class="fas fa-download"></i> Download Tournament Brackets</h3>
+            <p>Generate a comprehensive PDF with all team slots and tournament information.</p>
+            <button class="download-btn" id="download-pdf-btn" onclick="downloadBracketsPDF()">
+                <i class="fas fa-file-pdf"></i>
+                Download Brackets PDF
+            </button>
+        </div>
+
+        <!-- Confirmation Dialog Modal -->
+        <div class="delete-confirmation-modal" id="deleteConfirmationModal" style="display: none;">
+            <div class="modal-overlay" onclick="closeConfirmationModal()"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Confirm Team Removal</h3>
+                    <button class="modal-close-btn" onclick="closeConfirmationModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to remove <strong id="teamNameToRemove">Team Name</strong> from <strong
+                            id="tournamentNameToRemove">Tournament Name</strong>?</p>
+                    <p class="warning-text">This action will cancel their registration and cannot be undone.</p>
+                </div>
+                <div class="modal-actions">
+                    <button class="cancel-btn" onclick="closeConfirmationModal()">Cancel</button>
+                    <button class="confirm-btn" id="confirmRemoveBtn" onclick="confirmTeamRemoval()">
+                        <i class="fas fa-trash"></i>
+                        Remove Team
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://t2-237c.onrender.com';
+        let tournamentData = null;
+        let matchesData = [];
+
+        // Carousel variables
+        let currentSlide = 0;
+        let totalSlides = 0;
+
+        // Consolidated session function - checks both storage types with validation
+        function getSessionData() {
+            const session = localStorage.getItem('nexus_session') || sessionStorage.getItem('nexus_session');
+            if (!session) {
+                return null;
+            }
+            try {
+                const parsedSession = JSON.parse(session);
+                // Ensure the session object has the expected structure
+                if (parsedSession && parsedSession.token && parsedSession.user) {
+                    return parsedSession;
+                }
+                return null;
+            } catch (error) {
+                console.error('Error parsing session data:', error);
+                // Clear corrupted data from both storages
+                localStorage.removeItem('nexus_session');
+                sessionStorage.removeItem('nexus_session');
+                return null;
+            }
+        }
+
+        function checkUserAuthentication() {
+            const sessionData = getSessionData();
+            const guestMenu = document.getElementById('guest-menu');
+            const userMenu = document.getElementById('user-menu');
+            const user = sessionData?.user;
+
+            if (user) {
+                const username = user.username || (user.email ? user.email.split('@')[0] : 'User');
+                const userInitials = username.substring(0, 2).toUpperCase();
+
+                // Update navbar elements
+                const navbarUsername = document.getElementById('navbar-username');
+                const userAvatar = document.getElementById('user-avatar');
+
+                if (navbarUsername) {
+                    navbarUsername.textContent = username;
+                }
+                if (userAvatar) {
+                    userAvatar.textContent = userInitials;
+                }
+
+                // Show/hide menus
+                if (guestMenu) guestMenu.style.display = 'none';
+                if (userMenu) userMenu.style.display = 'flex';
+            } else {
+                // Show guest menu, hide user menu
+                if (guestMenu) guestMenu.style.display = 'block';
+                if (userMenu) userMenu.style.display = 'none';
+            }
+        }
+
+        // Mobile menu toggle for navbar
+        function initializeMobileMenu() {
+            const normalMenuToggle = document.getElementById('normalMenuToggle');
+            const normalNav = document.getElementById('normalNav');
+
+            if (normalMenuToggle && normalNav) {
+                normalMenuToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    normalMenuToggle.classList.toggle('active');
+                    normalNav.classList.toggle('active');
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.nav-normal') && normalNav.classList.contains('active')) {
+                        normalNav.classList.remove('active');
+                        normalMenuToggle.classList.remove('active');
+                    }
+                });
+            }
+        }
+
+        // Initialize navbar authentication state
+        function initializeNavbar() {
+            checkUserAuthentication();
+            initializeMobileMenu();
+        }
+
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('nexus_session');
+                sessionStorage.removeItem('nexus_session');
+                window.location.href = 'auth.html';
+            }
+        }
+
+        // Get tournament slug from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const tournamentSlug = urlParams.get('slug');
+        console.log('Tournament Slug:', tournamentSlug);
+
+        if (!tournamentSlug) {
+            initializeNavbar();
+            document.getElementById('brackets-container').innerHTML = `
+                <div class="no-brackets">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem; color: #ffc107;"></i>
+                    <h3>No Tournament Specified</h3>
+                    <p>Please select a tournament from the admin dashboard.</p>
+                </div>
+            `;
+        } else {
+            initializeNavbar();
+            loadTournamentBrackets();
+        }
+
+        // ... rest of your functions remain unchanged ...
+
+        async function loadTournamentBrackets() {
+            try {
+                // Load tournament data
+                const response = await fetch(`${API_BASE_URL}/api/tournaments/slug/${tournamentSlug}`);
+                if (!response.ok) {
+                    throw new Error('Tournament not found');
+                }
+
+                const apiResponse = await response.json();
+                console.log('API Response:', apiResponse);
+                tournamentData = apiResponse.data || apiResponse;
+                console.log('Tournament Data:', tournamentData);
+
+                // Update page title and info
+                document.getElementById('tournament-title').textContent = tournamentData.title;
+                document.title = `${tournamentData.title} - Brackets | Uni Games`;
+
+                // Display tournament info
+                displayTournamentInfo();
+
+                // Display brackets based on format
+                displayBrackets();
+
+            } catch (error) {
+                console.error('Error loading tournament:', error);
+                document.getElementById('brackets-container').innerHTML = `
+                    <div class="no-brackets">
+                        <i class="fas fa-exclamation-circle" style="font-size: 3rem; margin-bottom: 1rem; color: #dc3545;"></i>
+                        <h3>Error Loading Tournament</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function getMaxTeamsForDisplay() {
+            const format = (tournamentData.format || 'single_elimination').toLowerCase();
+            let maxTeams = tournamentData.maxTeams;
+
+            // For KP format, calculate maxTeams from kpSettings if not set
+            if (format === 'kp' && tournamentData.kpSettings && !maxTeams) {
+                const kpSettings = tournamentData.kpSettings;
+                maxTeams = (kpSettings.groupSize || 25) * (kpSettings.numberOfGroups || 4);
+            }
+
+            return maxTeams || 'Unlimited';
+        }
+
+        function displayTournamentInfo() {
+            const participants = tournamentData.participants || [];
+            const status = tournamentData.status || 'unknown';
+
+            // Create status badge
+            const statusBadge = `<span class="status-badge status-${status.replace('_', '-')}">${status.replace('_', ' ')}</span>`;
+
+            const infoHtml = `
+                <div class="info-item">
+                    <strong>Format:</strong> ${tournamentData.format || 'Single Elimination'}
+                </div>
+                <div class="info-item">
+                    <strong>Status:</strong> ${statusBadge}
+                </div>
+                <div class="info-item">
+                    <strong>Game:</strong> ${tournamentData.game || 'Not specified'}
+                </div>
+            `;
+            document.getElementById('tournament-info').innerHTML = infoHtml;
+
+            // Display tournament statistics
+            displayTournamentStats();
+
+            // Format info removed for cleaner interface
+
+            // Show download section
+            const downloadSection = document.getElementById('download-section');
+            const downloadBtn = document.getElementById('download-pdf-btn');
+
+            downloadSection.style.display = 'block';
+            downloadBtn.disabled = false;
+            downloadBtn.innerHTML = '<i class="fas fa-file-pdf"></i> Download Brackets PDF';
+            downloadBtn.classList.remove('admin-only');
+        }
+
+        function displayTournamentStats() {
+            const participants = tournamentData.participants || [];
+            const format = (tournamentData.format || 'single_elimination').toLowerCase();
+
+            // Get format configuration to calculate accurate stats
+            const formatConfig = getTournamentFormatConfig(format, participants.length);
+
+            let totalMatches = 0;
+            let rounds = 0;
+            let maxTeams = tournamentData.maxTeams; // Start with the value from the data
+
+            console.log('Initial Tournament Data:', tournamentData);
+            console.log('Format:', format);
+            console.log('Max Teams from Backend:', maxTeams);
+            console.log('Participants:', participants.length);
+
+            // For KP format, calculate maxTeams from kpSettings if not already set correctly
+            if (format === 'kp' && tournamentData.kpSettings) {
+                const kpSettings = tournamentData.kpSettings;
+                console.log('KP Settings:', kpSettings);
+                // This line was the source of the error. It should use tournamentData.
+                maxTeams = (kpSettings.groupSize || 25) * (kpSettings.numberOfGroups || 4);
+            }
+
+            // Fallback to participants length or unlimited if maxTeams is still not set
+            if (!maxTeams) {
+                maxTeams = participants.length || 'Unlimited';
+            }
+
+            console.log('Final Max Teams:', maxTeams);
+
+            if (formatConfig) {
+                // Calculate total matches from format configuration
+                formatConfig.stages.forEach(stage => {
+                    stage.tables.forEach(table => {
+                        totalMatches += table.totalMatches;
+                    });
+                });
+                rounds = formatConfig.stages.length;
+            } else {
+                // Fallback to basic calculations
+                switch (format) {
+                    case 'single_elimination':
+                        totalMatches = Math.max(0, participants.length - 1);
+                        rounds = Math.ceil(Math.log2(participants.length));
+                        break;
+                    case 'double_elimination':
+                        totalMatches = Math.max(0, (participants.length * 2) - 2);
+                        rounds = Math.ceil(Math.log2(participants.length)) + 1;
+                        break;
+                    case 'round_robin':
+                        totalMatches = (participants.length * (participants.length - 1)) / 2;
+                        rounds = participants.length - 1;
+                        break;
+                    case 'swiss':
+                        rounds = Math.ceil(Math.log2(participants.length));
+                        totalMatches = (participants.length / 2) * rounds;
+                        break;
+                    case 'kp':
+                        totalMatches = 5; // 4 qualifiers + 1 final
+                        rounds = 2; // Qualifiers + Finals
+                        break;
+                }
+            }
+
+            const statsHtml = `
+                <div class="stat-card">
+                    <span class="stat-number">${participants.length}/${maxTeams}</span>
+                    <div class="stat-label">Registered Teams</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">${totalMatches}</span>
+                    <div class="stat-label">Total Matches</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">${rounds}</span>
+                    <div class="stat-label">Tournament Stages</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">₹${tournamentData.entryFee || 0}</span>
+                    <div class="stat-label">Entry Fee</div>
+                </div>
+            `;
+
+            document.getElementById('tournament-stats').innerHTML = statsHtml;
+            document.getElementById('tournament-stats').style.display = 'grid';
+        }
+
+        async function displayBrackets() {
+            const participants = tournamentData.participants || [];
+            const container = document.getElementById('brackets-container');
+
+            if (participants.length === 0) {
+                container.innerHTML = `
+                    <div class="no-brackets">
+                        <i class="fas fa-users-slash" style="font-size: 3rem; margin-bottom: 1rem; color: #6c757d;"></i>
+                        <h3>No Teams Registered</h3>
+                        <p>Brackets will be generated once teams register for this tournament.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const format = (tournamentData.format || 'single_elimination').toLowerCase();
+
+            // Handle all tournament formats dynamically
+            displayTournamentBrackets(participants, container, format);
+
+            // Check admin access and hide/show delete buttons accordingly
+            const isAdmin = await checkAdminAccess();
+            if (!isAdmin) {
+                // Hide all delete buttons for non-admin users
+                const deleteButtons = document.querySelectorAll('.delete-teams-btn');
+                deleteButtons.forEach(btn => {
+                    btn.style.display = 'none';
+                });
+            }
+        }
+
+        function displayTournamentBrackets(participants, container, format) {
+            const formatConfig = getTournamentFormatConfig(format, participants.length);
+
+            if (!formatConfig) {
+                displayParticipantsList(participants, container);
+                return;
+            }
+
+            let html = ``;
+
+            // Create match tables for each stage
+            formatConfig.stages.forEach((stage, stageIndex) => {
+                html += `<div class="stage-section">`;
+
+                // Check if this is qualifier stage for carousel
+                if (stage.name.includes('Qualifier')) {
+                    html += `<div class="qualifier-carousel">`;
+                    html += `<div class="carousel-container">`;
+                    html += `<div class="carousel-slides" id="carousel-slides">`;
+
+                    // Create all qualifier tables as slides
+                    stage.tables.forEach((table, tableIndex) => {
+                        html += `<div class="carousel-slide">`;
+                        html += createMatchTable(table, participants, stageIndex, tableIndex);
+                        html += `</div>`;
+                    });
+
+                    html += `</div></div>`; // Close carousel-slides and carousel-container
+
+                    // Add navigation controls
+                    html += `<div class="carousel-controls">`;
+                    html += `<button class="carousel-btn" id="prev-btn" onclick="previousSlide()" disabled>
+                                <i class="fas fa-chevron-left"></i> <span>Previous</span>
+                            </button>`;
+                    html += `<span class="carousel-indicator" id="slide-indicator">Match 1 of ${stage.tables.length}</span>`;
+                    html += `<button class="carousel-btn" id="next-btn" onclick="nextSlide()">
+                                <span>Next</span> <i class="fas fa-chevron-right"></i>
+                            </button>`;
+                    html += `</div>`;
+
+                    html += `</div>`; // Close qualifier-carousel
+                } else {
+                    // For finalists or other stages, display normally
+                    stage.tables.forEach((table, tableIndex) => {
+                        html += createMatchTable(table, participants, stageIndex, tableIndex);
+                    });
+                }
+
+                html += `</div>`;
+            });
+
+
+
+            container.innerHTML = html;
+        }
+
+        function getTournamentFormatConfig(format, participantCount) {
+            // Use backend tournament data to generate format configuration
+            const formatSettings = tournamentData.kpSettings || {};
+            const matchSchedule = formatSettings.matchSchedule || [];
+
+            switch (format) {
+                case 'kp':
+                    return generateKPFormatConfig(formatSettings, matchSchedule, participantCount);
+                case 'single_elimination':
+                    return generateSingleEliminationConfig(participantCount);
+                case 'double_elimination':
+                    return generateDoubleEliminationConfig(participantCount);
+                case 'round_robin':
+                    return generateRoundRobinConfig(participantCount);
+                default:
+                    return generateGenericFormatConfig(format, participantCount);
+            }
+        }
+
+        function generateKPFormatConfig(kpSettings, matchSchedule, participantCount) {
+            const groupSize = kpSettings.groupSize || 25;
+            const numberOfGroups = kpSettings.numberOfGroups || 4;
+            const qualifiersPerGroup = kpSettings.qualifiersPerGroup || 4;
+
+            const qualifierTables = [];
+
+            // Generate qualifier tables based on match schedule from backend
+            if (matchSchedule.length > 0) {
+                matchSchedule.forEach((match, index) => {
+                    if (match.match && match.match.includes('Qualifier')) {
+                        qualifierTables.push({
+                            name: match.match,
+                            type: 'qualifier',
+                            teamsPerMatch: groupSize,
+                            totalMatches: 1,
+                            date: match.date,
+                            teams: match.teams || `${groupSize} teams competing`
+                        });
+                    }
+                });
+            } else {
+                // Fallback if no match schedule
+                for (let i = 1; i <= numberOfGroups; i++) {
+                    qualifierTables.push({
+                        name: `Qualifier Match ${i}`,
+                        type: 'qualifier',
+                        teamsPerMatch: groupSize,
+                        totalMatches: 1,
+                        teams: `${groupSize} teams competing`
+                    });
+                }
+            }
+
+            // Add final match
+            const finalMatch = matchSchedule.find(match => match.match && match.match.includes('Final'));
+            const finalTable = {
+                name: finalMatch ? finalMatch.match : 'Final Match',
+                type: 'final',
+                teamsPerMatch: numberOfGroups * qualifiersPerGroup,
+                totalMatches: 1,
+                date: finalMatch ? finalMatch.date : 'TBD',
+                teams: `Top ${numberOfGroups * qualifiersPerGroup} Qualifiers`
+            };
+
+            return {
+                title: 'KP Format Tournament',
+                description: `The top 4 of each qualification match will advance to the finals to determine the 16 finalists.`,
+                stages: [
+                    {
+                        name: 'Qualifier Matches',
+                        description: `The top 4 of each qualification match will advance to the finals to determine the 16 finalists.`,
+                        tables: qualifierTables
+                    },
+                    {
+                        name: 'Finalists',
+                        description: `Top ${numberOfGroups * qualifiersPerGroup} teams compete for championship`,
+                        tables: [finalTable]
+                    }
+                ]
+            };
+        }
+
+        function generateSingleEliminationConfig(participantCount) {
+            return {
+                title: 'Single Elimination Tournament',
+                description: 'Teams are eliminated after one loss. Winner advances through each round.',
+                stages: [
+                    {
+                        name: 'Elimination Rounds',
+                        description: 'Single elimination bracket progression',
+                        tables: [
+                            {
+                                name: 'Main Bracket',
+                                type: 'elimination',
+                                teamsPerMatch: 2,
+                                totalMatches: Math.max(0, participantCount - 1)
+                            }
+                        ]
+                    }
+                ]
+            };
+        }
+
+        function generateDoubleEliminationConfig(participantCount) {
+            return {
+                title: 'Double Elimination Tournament',
+                description: 'Teams must lose twice to be eliminated. Winners and losers brackets.',
+                stages: [
+                    {
+                        name: 'Winners Bracket',
+                        description: 'Main elimination bracket for undefeated teams',
+                        tables: [
+                            { name: 'Winners Bracket', type: 'winners', teamsPerMatch: 2, totalMatches: Math.max(0, participantCount - 1) }
+                        ]
+                    },
+                    {
+                        name: 'Losers Bracket',
+                        description: 'Second chance bracket for eliminated teams',
+                        tables: [
+                            { name: 'Losers Bracket', type: 'losers', teamsPerMatch: 2, totalMatches: Math.max(0, participantCount - 2) }
+                        ]
+                    }
+                ]
+            };
+        }
+
+        function generateRoundRobinConfig(participantCount) {
+            return {
+                title: 'Round Robin Tournament',
+                description: 'Every team plays every other team once.',
+                stages: [
+                    {
+                        name: 'Round Robin Matches',
+                        description: 'All teams play against each other',
+                        tables: [
+                            { name: 'Round Robin', type: 'round_robin', teamsPerMatch: 2, totalMatches: (participantCount * (participantCount - 1)) / 2 }
+                        ]
+                    }
+                ]
+            };
+        }
+
+        function generateGenericFormatConfig(format, participantCount) {
+            return {
+                title: `${format.charAt(0).toUpperCase() + format.slice(1)} Tournament`,
+                description: `Tournament using ${format} format.`,
+                stages: [
+                    {
+                        name: 'Tournament Matches',
+                        description: 'Tournament progression matches',
+                        tables: [
+                            { name: 'Main Tournament', type: 'generic', teamsPerMatch: participantCount, totalMatches: 1 }
+                        ]
+                    }
+                ]
+            };
+        }
+
+        function createMatchTable(tableConfig, participants, stageIndex, tableIndex) {
+            const tableId = `stage-${stageIndex}-table-${tableIndex}`;
+            let html = `<div class="match-table-container">`;
+            html += `<div class="match-table-header">`;
+            html += `<h5><i class="fas fa-list"></i> ${tableConfig.name}</h5>`;
+
+            // Calculate balanced team distribution across groups
+            const kpSettings = tournamentData.kpSettings || {};
+            const numberOfGroups = kpSettings.numberOfGroups || 4;
+            const totalParticipants = participants.length;
+
+            // Calculate balanced distribution
+            // Example: 97 teams, 4 groups -> base=24, extra=1 -> [25,24,24,24]
+            // Example: 96 teams, 4 groups -> base=24, extra=0 -> [24,24,24,24]
+            const baseTeamsPerGroup = Math.floor(totalParticipants / numberOfGroups);
+            const extraTeams = totalParticipants % numberOfGroups;
+
+            // Calculate this group's size and start/end indices
+            let currentGroupSize, startIndex;
+            if (tableIndex < extraTeams) {
+                // First 'extraTeams' groups get one extra team
+                currentGroupSize = baseTeamsPerGroup + 1;
+                startIndex = tableIndex * currentGroupSize;
+            } else {
+                // Remaining groups get base amount
+                currentGroupSize = baseTeamsPerGroup;
+                startIndex = (extraTeams * (baseTeamsPerGroup + 1)) + ((tableIndex - extraTeams) * baseTeamsPerGroup);
+            }
+
+            const endIndex = startIndex + currentGroupSize;
+            const qualifierTeams = participants.slice(startIndex, endIndex);
+
+            html += `<div class="match-header-controls">`;
+
+            if (tableConfig.type === 'qualifier') {
+                html += `<span class="match-count">${qualifierTeams.length}/${currentGroupSize} Teams</span>`;
+            } else {
+                html += `<span class="match-count">${tableConfig.totalMatches} ${tableConfig.totalMatches === 1 ? 'Match' : 'Matches'}</span>`;
+            }
+
+            // Add plus icon for admin to set schedule
+            html += `<button class="add-schedule-btn" onclick="setMatchSchedule('${tableId}', '${tableConfig.name}')" title="Set Match Schedule">
+                        <i class="fas fa-plus"></i>
+                     </button>`;
+
+            // Add delete button for all participant tables (admin only)
+            if (tableConfig.type === 'qualifier' || tableConfig.type === 'final') {
+                html += `<button class="delete-teams-btn" onclick="toggleDeleteMode('${tableId}')" title="Remove Teams">
+                            <i class="fas fa-trash"></i>
+                         </button>`;
+            }
+
+            // Display existing schedule if available
+            const existingSchedule = getMatchSchedule(tableId);
+            if (existingSchedule) {
+                html += `<span class="match-schedule" id="schedule-${tableId}">${existingSchedule}</span>`;
+            } else {
+                html += `<span class="match-schedule" id="schedule-${tableId}" style="display: none;"></span>`;
+            }
+
+            html += `</div>`;
+            html += `</div>`;
+
+            // Start Table
+            const tableClass = tableConfig.type === 'qualifier' ? 'match-table qualifier-table' : 'match-table';
+            html += `<table class="${tableClass}" id="${tableId}">`;
+
+            // Build table based on type
+            if (tableConfig.type === 'qualifier') {
+                html += `<thead><tr><th>S.No</th><th>Team Name</th><th>Captain</th><th>S.No</th><th>Team Name</th><th>Captain</th><th class="delete-column" style="display: none;">Action</th></tr></thead>`;
+                html += `<tbody>`;
+
+                // Create rows with 2 teams per row (6 columns total)
+                const totalRows = Math.ceil(currentGroupSize / 2);
+                for (let row = 0; row < totalRows; row++) {
+                    html += `<tr>`;
+
+                    // First team (left side)
+                    const slot1 = (row * 2) + 1;
+                    const team1 = qualifierTeams[slot1 - 1];
+
+                    html += `<td class="match-number">${slot1}</td>`;
+                    if (team1) {
+                        html += `<td class="match-teams" data-team-id="${team1._id || team1.id}">
+                                    <strong>${team1.teamName || 'Unnamed Team'}</strong>
+                                    <button class="team-delete-btn" onclick="removeTeam('${team1._id || team1.id}', '${tableId}', ${slot1})" title="Remove Team">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                 </td>`;
+                        html += `<td class="team-captain">${team1.captainEmail || 'No Captain Email'}</td>`;
+                    } else {
+                        html += `<td class="match-teams"><em>Open Slot</em></td>`;
+                        html += `<td class="team-captain">-</td>`;
+                    }
+
+                    // Second team (right side)
+                    const slot2 = (row * 2) + 2;
+                    if (slot2 <= currentGroupSize) {
+                        const team2 = qualifierTeams[slot2 - 1];
+
+                        html += `<td class="match-number">${slot2}</td>`;
+                        if (team2) {
+                            html += `<td class="match-teams" data-team-id="${team2._id || team2.id}">
+                                        <strong>${team2.teamName || 'Unnamed Team'}</strong>
+                                        <button class="team-delete-btn" onclick="removeTeam('${team2._id || team2.id}', '${tableId}', ${slot2})" title="Remove Team">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                     </td>`;
+                            html += `<td class="team-captain">${team2.captainEmail || 'No Captain Email'}</td>`;
+                        } else {
+                            html += `<td class="match-teams"><em>Open Slot</em></td>`;
+                            html += `<td class="team-captain">-</td>`;
+                        }
+                    } else {
+                        // Empty cells for the last row if odd number of teams
+                        html += `<td class="match-number"></td>`;
+                        html += `<td class="match-teams"></td>`;
+                        html += `<td class="team-captain"></td>`;
+                    }
+
+                    // Delete action column (hidden by default)
+                    html += `<td class="delete-column" style="display: none;"></td>`;
+                    html += `</tr>`;
+                }
+                html += `</tbody>`;
+            } else if (tableConfig.type === 'final') {
+                html += `<thead><tr><th>S.No</th><th>Team Name</th><th>S.No</th><th>Team Name</th><th class="delete-column" style="display: none;">Action</th></tr></thead>`;
+                html += `<tbody>`;
+
+                // Check if we have finalists data
+                const finalists = tournamentData.finalists || [];
+                const numberOfGroups = kpSettings.numberOfGroups || 4;
+                const qualifiersPerGroup = kpSettings.qualifiersPerGroup || 4;
+                const totalFinalists = numberOfGroups * qualifiersPerGroup; // 16 teams
+
+                // Create rows with 2 teams per row (4 columns total)
+                for (let i = 0; i < totalFinalists; i += 2) {
+                    html += `<tr>`;
+
+                    // First team (left side)
+                    const team1 = finalists[i];
+                    html += `<td class="match-number">${i + 1}</td>`;
+                    if (team1) {
+                        html += `<td class="match-teams" data-team-id="${team1._id || team1.id || ''}">
+                                    <strong>${team1.teamName || team1.name || 'Unnamed Team'}</strong>
+                                    <button class="team-delete-btn" onclick="removeTeam('${team1._id || team1.id}', '${tableId}', ${i + 1})" title="Remove Team">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                 </td>`;
+                    } else {
+                        html += `<td class="match-teams"><em>TBD</em></td>`;
+                    }
+
+                    // Second team (right side)
+                    const team2 = finalists[i + 1];
+                    html += `<td class="match-number">${i + 2}</td>`;
+                    if (team2) {
+                        html += `<td class="match-teams" data-team-id="${team2._id || team2.id || ''}">
+                                    <strong>${team2.teamName || team2.name || 'Unnamed Team'}</strong>
+                                    <button class="team-delete-btn" onclick="removeTeam('${team2._id || team2.id}', '${tableId}', ${i + 2})" title="Remove Team">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                 </td>`;
+                    } else {
+                        html += `<td class="match-teams"><em>TBD</em></td>`;
+                    }
+
+                    // Delete action column (hidden by default)
+                    html += `<td class="delete-column" style="display: none;"></td>`;
+
+                    html += `</tr>`;
+                }
+                html += `</tbody>`;
+            }
+
+            html += `</table></div>`;
+            return html;
+        }
+
+
+
+
+
+        function displaySingleEliminationBrackets(participants, container) {
+            const numTeams = participants.length;
+            const numRounds = Math.ceil(Math.log2(numTeams));
+
+            // Generate matches data for all rounds
+            matchesData = generateSingleEliminationMatches(participants, numRounds);
+
+            let html = `<h3>Single Elimination Tournament Structure</h3>`;
+
+            // Visual bracket overview
+            html += '<div class="rounds-container">';
+            for (let round = 1; round <= numRounds; round++) {
+                const matchesInRound = Math.pow(2, numRounds - round);
+                html += `<div class="bracket-round">`;
+                html += `<div class="round-title">`;
+
+                if (round === numRounds) {
+                    html += 'Final';
+                } else if (round === numRounds - 1) {
+                    html += 'Semi-Final';
+                } else if (round === numRounds - 2) {
+                    html += 'Quarter-Final';
+                } else {
+                    html += `Round ${round}`;
+                }
+
+                html += `</div>`;
+
+                for (let match = 0; match < matchesInRound; match++) {
+                    const matchData = matchesData.find(m => m.round === round && m.matchInRound === match + 1);
+                    html += `<div class="bracket-match">`;
+
+                    if (matchData) {
+                        html += `<div class="match-teams">`;
+                        html += `<div class="team">
+                            <span class="team-name">${matchData.team1 || 'TBD'}</span>
+                            ${matchData.team1 ? `<span class="seed-number">#${matchData.seed1}</span>` : ''}
+                        </div>`;
+                        html += `<div class="team">
+                            <span class="team-name">${matchData.team2 || 'TBD'}</span>
+                            ${matchData.team2 ? `<span class="seed-number">#${matchData.seed2}</span>` : ''}
+                        </div>`;
+                        html += `</div>`;
+                        html += `<div class="match-status">${matchData.status}</div>`;
+                    }
+
+                    html += `</div>`;
+                }
+
+                html += `</div>`;
+            }
+            html += '</div>';
+
+            // Detailed match tables for each round
+            html += '<div class="matches-section">';
+            html += '<h3>Detailed Match Schedule</h3>';
+
+            for (let round = 1; round <= numRounds; round++) {
+                const roundMatches = matchesData.filter(m => m.round === round);
+                if (roundMatches.length === 0) continue;
+
+                html += `<div class="round-section">`;
+                html += `<div class="round-header">`;
+
+                if (round === numRounds) {
+                    html += `<i class="fas fa-trophy"></i> Final Match`;
+                } else if (round === numRounds - 1) {
+                    html += `<i class="fas fa-medal"></i> Semi-Final Matches`;
+                } else if (round === numRounds - 2) {
+                    html += `<i class="fas fa-star"></i> Quarter-Final Matches`;
+                } else {
+                    html += `<i class="fas fa-play"></i> Round ${round} Matches`;
+                }
+
+                html += `</div>`;
+
+                html += `<table class="match-table">`;
+                html += `<thead>
+                    <tr>
+                        <th>Match #</th>
+                        <th>Team 1</th>
+                        <th>vs</th>
+                        <th>Team 2</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+                roundMatches.forEach(match => {
+                    html += `<tr>
+                        <td><span class="match-number">M${match.matchId}</span></td>
+                        <td>${match.team1 || 'TBD'} ${match.team1 ? `<span class="seed-number">#${match.seed1}</span>` : ''}</td>
+                        <td><span class="vs-separator">VS</span></td>
+                        <td>${match.team2 || 'TBD'} ${match.team2 ? `<span class="seed-number">#${match.seed2}</span>` : ''}</td>
+
+                    </tr>`;
+                });
+
+                html += `</tbody></table>`;
+                html += `</div>`;
+            }
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function generateSingleEliminationMatches(participants, numRounds) {
+            const matches = [];
+            let matchId = 1;
+
+            for (let round = 1; round <= numRounds; round++) {
+                const matchesInRound = Math.pow(2, numRounds - round);
+
+                for (let matchInRound = 1; matchInRound <= matchesInRound; matchInRound++) {
+                    let team1 = null, team2 = null, seed1 = null, seed2 = null;
+                    let status = 'Scheduled';
+                    let winnerAdvancesTo = '';
+
+                    if (round === 1) {
+                        // First round - assign actual teams
+                        const team1Index = (matchInRound - 1) * 2;
+                        const team2Index = (matchInRound - 1) * 2 + 1;
+
+                        if (participants[team1Index]) {
+                            team1 = participants[team1Index].teamName;
+                            seed1 = team1Index + 1;
+                        }
+                        if (participants[team2Index]) {
+                            team2 = participants[team2Index].teamName;
+                            seed2 = team2Index + 1;
+                        }
+
+                        if (!team1 && !team2) {
+                            status = 'No Teams';
+                        } else if (!team1 || !team2) {
+                            status = 'Bye';
+                        }
+                    } else {
+                        status = 'Awaiting Previous Round';
+                    }
+
+                    // Determine where winner advances
+                    if (round === numRounds) {
+                        winnerAdvancesTo = 'Tournament Champion';
+                    } else if (round === numRounds - 1) {
+                        winnerAdvancesTo = 'Final';
+                    } else if (round === numRounds - 2) {
+                        winnerAdvancesTo = 'Semi-Final';
+                    } else {
+                        winnerAdvancesTo = `Round ${round + 1}`;
+                    }
+
+                    matches.push({
+                        matchId: matchId++,
+                        round: round,
+                        matchInRound: matchInRound,
+                        team1: team1,
+                        team2: team2,
+                        seed1: seed1,
+                        seed2: seed2,
+                        status: status,
+                        scheduledTime: 'TBD',
+                        winnerAdvancesTo: winnerAdvancesTo
+                    });
+                }
+            }
+
+            return matches;
+        }
+
+        function displayDoubleEliminationBrackets(participants, container) {
+            container.innerHTML = `
+                <div class="no-brackets">
+                    <i class="fas fa-construction" style="font-size: 3rem; margin-bottom: 1rem; color: #ffc107;"></i>
+                    <h3>Double Elimination Brackets</h3>
+                    <p>Double elimination bracket view is under development.</p>
+                    <div style="margin-top: 2rem;">
+                        <h4>Registered Teams (${participants.length}):</h4>
+                        <div class="participants-grid">
+                            ${participants.map((p, i) => `
+                                <div class="participant-card">
+                                    <h4>${p.teamName}</h4>
+                                    <p><strong>Captain:</strong> ${p.captainEmail}</p>
+                                    <p><strong>Players:</strong> ${p.players ? p.players.length : 0}</p>
+                                    <span class="seed-number">Seed #${i + 1}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayRoundRobinBrackets(participants, container) {
+            container.innerHTML = `
+                <div class="no-brackets">
+                    <i class="fas fa-table" style="font-size: 3rem; margin-bottom: 1rem; color: #17a2b8;"></i>
+                    <h3>Round Robin Format</h3>
+                    <p>In round robin, every team plays every other team once.</p>
+                    <p><strong>Total matches needed:</strong> ${(participants.length * (participants.length - 1)) / 2}</p>
+                    <div style="margin-top: 2rem;">
+                        <h4>Registered Teams (${participants.length}):</h4>
+                        <div class="participants-grid">
+                            ${participants.map((p, i) => `
+                                <div class="participant-card">
+                                    <h4>${p.teamName}</h4>
+                                    <p><strong>Captain:</strong> ${p.captainEmail}</p>
+                                    <p><strong>Players:</strong> ${p.players ? p.players.length : 0}</p>
+                                    <span class="seed-number">Team #${i + 1}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displaySwissBrackets(participants, container) {
+            container.innerHTML = `
+                <div class="no-brackets">
+                    <i class="fas fa-chess" style="font-size: 3rem; margin-bottom: 1rem; color: #6f42c1;"></i>
+                    <h3>Swiss System Format</h3>
+                    <p>Teams are paired based on their current standings each round.</p>
+                    <div style="margin-top: 2rem;">
+                        <h4>Registered Teams (${participants.length}):</h4>
+                        <div class="participants-grid">
+                            ${participants.map((p, i) => `
+                                <div class="participant-card">
+                                    <h4>${p.teamName}</h4>
+                                    <p><strong>Captain:</strong> ${p.captainEmail}</p>
+                                    <p><strong>Players:</strong> ${p.players ? p.players.length : 0}</p>
+                                    <span class="seed-number">Team #${i + 1}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayParticipantsList(participants, container) {
+            container.innerHTML = `
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h3>Tournament Participants</h3>
+                    <p>Bracket structure will be determined based on tournament format.</p>
+                </div>
+                <div class="participants-grid">
+                    ${participants.map((p, i) => `
+                        <div class="participant-card">
+                            <h4>${p.teamName}</h4>
+                            <p><strong>Captain:</strong> ${p.captainEmail}</p>
+                            <p><strong>Players:</strong> ${p.players ? p.players.length : 0}</p>
+                            <p><strong>Registration:</strong> ${new Date(p.registrationDate).toLocaleDateString()}</p>
+                            <p><strong>Payment:</strong> ${p.paymentStatus || 'Pending'}</p>
+                            <span class="seed-number">Team #${i + 1}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        async function checkAdminAccess() {
+            try {
+                const session = getSessionData();
+                // Check if the user's role is 'admin' directly from the session data.
+                return session && session.user && session.user.role === 'admin';
+            } catch (error) {
+                console.error('Error checking admin access:', error);
+                return false;
+            }
+        }
+
+
+
+        function getMatchSchedule(matchId, fallbackDate) {
+            // Check for schedule events
+            if (tournamentData.scheduleEvents) {
+                const matchEvent = tournamentData.scheduleEvents.find(event =>
+                    event.title.toLowerCase().includes('match') &&
+                    event.title.toLowerCase().includes(matchId.toString())
+                );
+                if (matchEvent) {
+                    const date = new Date(`${matchEvent.date}T${matchEvent.time}`);
+                    return date.toLocaleString();
+                }
+            }
+
+            // Check KP format match schedule
+            if (tournamentData.format === 'kp' && tournamentData.kpSettings && tournamentData.kpSettings.matchSchedule) {
+                const kpMatch = tournamentData.kpSettings.matchSchedule.find(match =>
+                    match.match.toLowerCase().includes(matchId.toString()) ||
+                    match.match.toLowerCase().includes('match')
+                );
+                if (kpMatch) {
+                    const date = new Date(kpMatch.date);
+                    return date.toLocaleString();
+                }
+            }
+
+            // Fallback to provided date or TBD
+            if (fallbackDate && fallbackDate !== 'TBD') {
+                const date = new Date(fallbackDate);
+                return date.toLocaleString();
+            }
+
+            return 'TBD';
+        }
+
+        async function downloadBracketsPDF() {
+            if (!tournamentData) {
+                alert('No tournament data available for download.');
+                return;
+            }
+
+            const format = (tournamentData.format || 'single_elimination').toLowerCase();
+            const isAdmin = await checkAdminAccess();
+            
+            // 1. Check if the format is KP and if the user is an Admin
+            if (format === 'kp' && isAdmin) {
+                const session = getSessionData();
+                const authToken = session ? session.token : null;
+                
+                if (!authToken) {
+                    showNotification("Authentication required for detailed PDF download.", 'error');
+                    return;
+                }
+
+                const downloadBtn = document.getElementById('download-pdf-btn');
+                const originalText = downloadBtn.innerHTML;
+                downloadBtn.disabled = true;
+                downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating Roster...';
+
+                try {
+                    // 2. Call the dedicated backend endpoint to get the ReportLab-generated PDF
+                    const downloadUrl = `${API_BASE_URL}/api/tournaments/${tournamentSlug}/export/kp-slots-pdf?token=${authToken}`;
+                    
+                    // Open URL in a new window/tab to trigger download
+                    window.open(downloadUrl, '_blank');
+                    
+                    showNotification("Detailed KP Roster download started.", 'success');
+
+                } catch (error) {
+                    console.error('Error during backend PDF download:', error);
+                    showNotification("Failed to generate detailed PDF. Check server logs.", 'error');
+                } finally {
+                    // 3. Restore button state regardless of success/failure
+                    downloadBtn.disabled = false;
+                    downloadBtn.innerHTML = originalText;
+                }
+                
+                // Exit the function after calling the backend
+                return; 
+            }
+
+            // 4. Fallback for other formats (using existing client-side jsPDF logic) or non-admin users
+            if (format === 'kp' && !isAdmin) {
+                showNotification("Only tournament administrators can download the detailed KP Roster.", 'warning');
+                return;
+            }
+
+
+            // --- START: Existing jsPDF Client-Side Logic for other formats ---
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const participants = tournamentData.participants || [];
+            
+            // Page 1: Tournament Overview (Keep this part for all non-KP or non-admin downloads)
+            doc.setFontSize(20);
+            doc.setTextColor(15, 133, 211);
+            doc.text(tournamentData.title, 20, 30);
+
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Tournament Brackets & Team Slots`, 20, 45);
+            doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 55);
+
+            // Tournament Information
+            doc.setFontSize(14);
+            doc.text('Tournament Information', 20, 75);
+            doc.setFontSize(10);
+
+            const maxTeams = getMaxTeamsForDisplay();
+            const infoText = [
+                `Format: ${tournamentData.format || 'Single Elimination'}`,
+                `Game: ${tournamentData.game || 'Not specified'}`,
+                `Teams Registered: ${participants.length}`,
+                `Maximum Teams: ${maxTeams}`,
+                `Entry Fee: ₹${tournamentData.entryFee || 0}`,
+                `Prize Pool: ₹${tournamentData.prizePool || 0}`,
+                `Status: ${tournamentData.status || 'Unknown'}`,
+                `Registration Start: ${tournamentData.registrationStart ? new Date(tournamentData.registrationStart).toLocaleDateString() : 'TBD'}`,
+                `Registration End: ${tournamentData.registrationEnd ? new Date(tournamentData.registrationEnd).toLocaleDateString() : 'TBD'}`,
+                `Tournament Start: ${tournamentData.tournamentStart ? new Date(tournamentData.tournamentStart).toLocaleDateString() : 'TBD'}`,
+                `Tournament End: ${tournamentData.tournamentEnd ? new Date(tournamentData.tournamentEnd).toLocaleDateString() : 'TBD'}`
+            ];
+
+            let yPos = 85;
+            infoText.forEach(text => {
+                doc.text(text, 20, yPos);
+                yPos += 8;
+            });
+
+            // Generate tournament tables based on format (using client-side jsPDF for non-KP formats)
+            const formatConfig = getTournamentFormatConfig(format, participants.length);
+
+            if (formatConfig && formatConfig.stages) {
+                // Add tournament tables for each stage
+                formatConfig.stages.forEach((stage, stageIndex) => {
+                    doc.addPage();
+
+                    // Stage header
+                    doc.setFontSize(18);
+                    doc.setTextColor(15, 133, 211);
+                    doc.text(stage.name, 20, 30);
+
+                    doc.setFontSize(12);
+                    doc.setTextColor(0, 0, 0);
+                    doc.text(stage.description, 20, 45);
+
+                    let currentY = 60;
+
+                    stage.tables.forEach((table, tableIndex) => {
+                        // Check if we need a new page
+                        if (currentY > 200) {
+                            doc.addPage();
+                            currentY = 30;
+                        }
+
+                        // Table header
+                        doc.setFontSize(14);
+                        doc.setTextColor(15, 133, 211);
+                        doc.text(table.name, 20, currentY);
+
+                        // Add schedule information if available
+                        const tableId = `stage-${stageIndex}-table-${tableIndex}`;
+                        const schedule = getMatchSchedule(tableId);
+                        if (schedule) {
+                            doc.setFontSize(10);
+                            doc.setTextColor(93, 63, 211);
+                            doc.text(`Schedule: ${schedule}`, 20, currentY + 10);
+                            currentY += 25;
+                        } else {
+                            currentY += 15;
+                        }
+
+                        // IMPORTANT: For KP format, this block is now ONLY a fallback 
+                        // as the main execution path above will have already exited for admins.
+                        if (table.type === 'qualifier') { 
+                            // Generate qualifier table data with balanced distribution
+                            const kpSettings = tournamentData.kpSettings || {};
+                            const numberOfGroups = kpSettings.numberOfGroups || 4;
+                            const totalParticipants = participants.length;
+
+                            // Calculate balanced distribution
+                            const baseTeamsPerGroup = Math.floor(totalParticipants / numberOfGroups);
+                            const extraTeams = totalParticipants % numberOfGroups;
+
+                            // Calculate this group's size and start/end indices
+                            let currentGroupSize, startIndex;
+                            if (tableIndex < extraTeams) {
+                                currentGroupSize = baseTeamsPerGroup + 1;
+                                startIndex = tableIndex * currentGroupSize;
+                            } else {
+                                currentGroupSize = baseTeamsPerGroup;
+                                startIndex = (extraTeams * (baseTeamsPerGroup + 1)) + ((tableIndex - extraTeams) * baseTeamsPerGroup);
+                            }
+
+                            const endIndex = startIndex + currentGroupSize;
+                            const qualifierTeams = participants.slice(startIndex, endIndex);
+
+                            const tableData = [];
+                            for (let slot = 1; slot <= currentGroupSize; slot++) {
+                                const team = qualifierTeams[slot - 1];
+                                tableData.push([
+                                    slot.toString(),
+                                    team ? (team.teamName || 'Unnamed Team') : 'Open Slot',
+                                    team ? (team.captainEmail || 'No Captain Email') : '-'
+                                ]);
+                            }
+
+                            doc.autoTable({
+                                head: [['S.No', 'Team Name', 'Captain']],
+                                body: tableData,
+                                startY: currentY,
+                                styles: { fontSize: 8 },
+                                headStyles: { fillColor: [15, 133, 211] },
+                                columnStyles: {
+                                    0: { cellWidth: 20, halign: 'center' },
+                                    1: { cellWidth: 80 },
+                                    2: { cellWidth: 70 }
+                                }
+                            });
+
+                            currentY = doc.lastAutoTable.finalY + 20;
+
+                        } else if (table.type === 'final') {
+                            // Generate finalists table data (4-column layout)
+                            const finalists = tournamentData.finalists || [];
+                            const kpSettings = tournamentData.kpSettings || {};
+                            const numberOfGroups = kpSettings.numberOfGroups || 4;
+                            const qualifiersPerGroup = kpSettings.qualifiersPerGroup || 4;
+                            const totalFinalists = numberOfGroups * qualifiersPerGroup; // 16 teams
+                            const tableData = [];
+
+                            // Create rows with 2 teams per row (4 columns total)
+                            for (let i = 0; i < totalFinalists; i += 2) {
+                                const team1 = finalists[i];
+                                const team2 = finalists[i + 1];
+
+                                tableData.push([
+                                    (i + 1).toString(),
+                                    team1 ? (team1.teamName || team1.name || 'Unnamed Team') : 'TBD',
+                                    (i + 2).toString(),
+                                    team2 ? (team2.teamName || team2.name || 'Unnamed Team') : 'TBD'
+                                ]);
+                            }
+
+                            doc.autoTable({
+                                head: [['S.No', 'Team Name', 'S.No', 'Team Name']],
+                                body: tableData,
+                                startY: currentY,
+                                styles: { fontSize: 8 },
+                                headStyles: { fillColor: [15, 133, 211] },
+                                columnStyles: {
+                                    0: { cellWidth: 20, halign: 'center' },
+                                    1: { cellWidth: 65 },
+                                    2: { cellWidth: 20, halign: 'center' },
+                                    3: { cellWidth: 65 }
+                                }
+                            });
+
+                            currentY = doc.lastAutoTable.finalY + 20;
+                        }
+                    });
+                });
+            } else {
+                // Fallback: Simple participant list
+                doc.addPage();
+                doc.setFontSize(16);
+                doc.setTextColor(15, 133, 211);
+                doc.text('Registered Teams', 20, 30);
+
+                if (participants.length > 0) {
+                    const teamData = participants.map((p, index) => [
+                        (index + 1).toString(),
+                        p.teamName || 'Unnamed Team',
+                        p.captainEmail || 'No Captain Email'
+                    ]);
+
+                    doc.autoTable({
+                        head: [['S.No', 'Team Name', 'Captain Email']],
+                        body: teamData,
+                        startY: 50,
+                        styles: { fontSize: 10 },
+                        headStyles: { fillColor: [15, 133, 211] },
+                        columnStyles: {
+                            0: { cellWidth: 20, halign: 'center' },
+                            1: { cellWidth: 80 },
+                            2: { cellWidth: 70 }
+                        }
+                    });
+                }
+            }
+
+            // Final page: Tournament Rules & Notes
+            doc.addPage();
+            doc.setFontSize(16);
+            doc.setTextColor(15, 133, 211);
+            doc.text('Tournament Rules & Information', 20, 30);
+
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            const rulesText = [
+                '• All matches must be played according to the scheduled time',
+                '• Teams must report match results to tournament organizers',
+                '• No-shows will result in automatic forfeit',
+                '• Disputes must be reported within 30 minutes of match completion',
+                '• Tournament organizers reserve the right to modify schedule if needed',
+                '• All participants must follow the game\'s terms of service',
+                '• Prize distribution will occur after tournament completion',
+                '',
+                'Contact Information:',
+                `• Tournament: ${tournamentData.title}`,
+                `• Format: ${tournamentData.format || 'Single Elimination'}`,
+                `• Total Prize Pool: ₹${tournamentData.prizePool || 0}`,
+                '',
+                'For support or questions, contact the tournament organizers.',
+                '',
+                `Document generated on: ${new Date().toLocaleString()}`
+            ];
+
+            let rulesY = 50;
+            rulesText.forEach(text => {
+                doc.text(text, 20, rulesY);
+                rulesY += 8;
+            });
+
+            // Save the PDF
+            const fileName = `${tournamentData.slug || 'tournament'}-brackets-${new Date().toISOString().split('T')[0]}.pdf`;
+            doc.save(fileName);
+        }
+
+        // --- END: Existing jsPDF Client-Side Logic for other formats ---
+
+        // Match schedule management functions
+        function setMatchSchedule(tableId, tableName) {
+            // Create a modal-like prompt for date and time
+            const currentSchedule = getMatchSchedule(tableId);
+            const defaultDateTime = currentSchedule ? currentSchedule.replace(' at ', 'T').replace(/(\d{1,2}):(\d{2}) (AM|PM)/, (match, hour, minute, period) => {
+                let hour24 = parseInt(hour);
+                if (period === 'PM' && hour24 !== 12) hour24 += 12;
+                if (period === 'AM' && hour24 === 12) hour24 = 0;
+                return String(hour24).padStart(2, '0') + ':' + minute;
+            }) : '';
+
+            const dateTimeInput = prompt(
+                `Set schedule for "${tableName}"\n\nEnter date and time (YYYY-MM-DD HH:MM format):\nExample: 2024-12-25 14:30`,
+                defaultDateTime
+            );
+
+            if (dateTimeInput === null) return; // User cancelled
+
+            if (!dateTimeInput.trim()) {
+                alert('Please enter a valid date and time.');
+                return;
+            }
+
+            // Validate the input format
+            const dateTimeRegex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
+            if (!dateTimeRegex.test(dateTimeInput.trim())) {
+                alert('Invalid format. Please use YYYY-MM-DD HH:MM format (e.g., 2024-12-25 14:30)');
+                return;
+            }
+
+            const [datePart, timePart] = dateTimeInput.trim().split(' ');
+            const [year, month, day] = datePart.split('-');
+            const [hour, minute] = timePart.split(':');
+
+            // Create a proper date object to validate
+            const scheduleDate = new Date(year, month - 1, day, hour, minute);
+            if (isNaN(scheduleDate.getTime())) {
+                alert('Invalid date or time. Please check your input.');
+                return;
+            }
+
+            // Format for display
+            const displayDate = scheduleDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+            const displayTime = scheduleDate.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+            const displaySchedule = `${displayDate} at ${displayTime}`;
+
+            // Confirmation
+            const confirmed = confirm(`Confirm schedule for "${tableName}":\n\n${displaySchedule}\n\nThis will be saved and visible in the tournament brackets.`);
+
+            if (confirmed) {
+                saveMatchSchedule(tableId, displaySchedule);
+                updateScheduleDisplay(tableId, displaySchedule);
+            }
+        }
+
+        function getMatchSchedule(tableId) {
+            // Get from localStorage first (for immediate display)
+            const localSchedule = localStorage.getItem(`schedule_${tableId}`);
+            if (localSchedule) return localSchedule;
+
+            // Get from tournament data if available
+            if (tournamentData && tournamentData.matchSchedules && tournamentData.matchSchedules[tableId]) {
+                return tournamentData.matchSchedules[tableId];
+            }
+
+            return null;
+        }
+
+        function saveMatchSchedule(tableId, schedule) {
+            // Save to localStorage for immediate persistence
+            localStorage.setItem(`schedule_${tableId}`, schedule);
+
+            // Save to backend
+            saveScheduleToBackend(tableId, schedule);
+        }
+
+        function updateScheduleDisplay(tableId, schedule) {
+            const scheduleElement = document.getElementById(`schedule-${tableId}`);
+            if (scheduleElement) {
+                scheduleElement.textContent = schedule;
+                scheduleElement.style.display = 'inline-block';
+            }
+        }
+
+        async function saveScheduleToBackend(tableId, schedule) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/tournaments/${tournamentSlug}/schedule`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tableId: tableId,
+                        schedule: schedule
+                    })
+                });
+
+                if (!response.ok) {
+                    console.error('Failed to save schedule to backend');
+                    // Keep the localStorage version as fallback
+                }
+            } catch (error) {
+                console.error('Error saving schedule to backend:', error);
+                // Keep the localStorage version as fallback
+            }
+        }
+
+        // Load schedules from backend when tournament data is loaded
+        function loadMatchSchedules() {
+            if (tournamentData && tournamentData.matchSchedules) {
+                Object.keys(tournamentData.matchSchedules).forEach(tableId => {
+                    const schedule = tournamentData.matchSchedules[tableId];
+                    updateScheduleDisplay(tableId, schedule);
+                });
+            }
+        }
+
+        // Call loadMatchSchedules after tournament data is loaded
+        const originalLoadTournamentBrackets = loadTournamentBrackets;
+        loadTournamentBrackets = async function () {
+            await originalLoadTournamentBrackets();
+            // Small delay to ensure DOM is updated
+            setTimeout(loadMatchSchedules, 100);
+        };
+
+        // Carousel functionality
+        function initializeCarousel() {
+            const carouselSlides = document.getElementById('carousel-slides');
+            if (carouselSlides) {
+                totalSlides = carouselSlides.children.length;
+                currentSlide = 0;
+                updateCarousel();
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateCarousel();
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateCarousel();
+            }
+        }
+
+        function updateCarousel() {
+            const carouselSlides = document.getElementById('carousel-slides');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const indicator = document.getElementById('slide-indicator');
+
+            if (carouselSlides) {
+                carouselSlides.style.transform = `translateX(-${currentSlide * 100}%)`;
+            }
+
+            // Update button states
+            if (prevBtn) prevBtn.disabled = currentSlide === 0;
+            if (nextBtn) nextBtn.disabled = currentSlide === totalSlides - 1;
+
+            // Update indicator
+            if (indicator) indicator.textContent = `Match ${currentSlide + 1} of ${totalSlides}`;
+        }
+
+        // Initialize carousel after brackets are loaded
+        const originalDisplayBrackets = displayBrackets;
+        displayBrackets = async function () {
+            await originalDisplayBrackets();
+            setTimeout(initializeCarousel, 100);
+        };
+
+        // Delete functionality
+        function toggleDeleteMode(tableId) {
+            const table = document.getElementById(tableId);
+            const deleteBtn = document.querySelector(`button[onclick="toggleDeleteMode('${tableId}')"]`);
+
+            if (table && deleteBtn) {
+                const isDeleteMode = table.classList.contains('delete-mode');
+
+                if (isDeleteMode) {
+                    // Exit delete mode
+                    table.classList.remove('delete-mode');
+                    deleteBtn.classList.remove('active');
+                    deleteBtn.title = 'Remove Teams';
+                } else {
+                    // Enter delete mode
+                    table.classList.add('delete-mode');
+                    deleteBtn.classList.add('active');
+                    deleteBtn.title = 'Exit Delete Mode';
+                }
+            }
+        }
+
+        // Global variables for modal confirmation and rate limiting
+        let pendingRemoval = null;
+        let lastRemovalAttempt = 0;
+        const REMOVAL_COOLDOWN = 2000; // 2 seconds between removal attempts
+
+        async function removeTeam(teamId, tableId, slot) {
+            if (!teamId) {
+                showNotification('No team to remove from this slot.', 'warning');
+                return;
+            }
+
+            // Check admin access first
+            const isAdmin = await checkAdminAccess();
+            if (!isAdmin) {
+                showNotification('Admin access required to remove participants', 'error');
+                return;
+            }
+
+            const team = (tournamentData.participants || []).find(p => (p._id || p.id) === teamId);
+            if (!team) {
+                showNotification('Team not found in tournament data.', 'error');
+                return;
+            }
+
+            const teamName = team.teamName || 'Unknown Team';
+
+            // Store details for confirmation
+            pendingRemoval = { teamId, tableId, slot, teamName, timestamp: Date.now() };
+            showConfirmationModal(teamName, tournamentData.title || 'Tournament');
+        }
+
+        function showConfirmationModal(teamName, tournamentName) {
+            document.getElementById('teamNameToRemove').textContent = teamName;
+            document.getElementById('tournamentNameToRemove').textContent = tournamentName;
+            document.getElementById('deleteConfirmationModal').style.display = 'flex';
+
+            // Focus on cancel button for accessibility
+            document.querySelector('.cancel-btn').focus();
+
+            // Add keyboard event listeners
+            document.addEventListener('keydown', handleModalKeydown);
+        }
+
+        function handleModalKeydown(event) {
+            if (event.key === 'Escape') {
+                closeConfirmationModal();
+            } else if (event.key === 'Enter') {
+                event.preventDefault();
+                confirmTeamRemoval();
+            }
+        }
+
+        function closeConfirmationModal() {
+            document.getElementById('deleteConfirmationModal').style.display = 'none';
+            pendingRemoval = null;
+
+            // Remove keyboard event listeners
+            document.removeEventListener('keydown', handleModalKeydown);
+
+            // Reset modal button state
+            const confirmBtn = document.getElementById('confirmRemoveBtn');
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = '<i class="fas fa-trash"></i> Remove Team';
+        }
+
+        async function confirmTeamRemoval() {
+            if (!pendingRemoval) {
+                closeConfirmationModal();
+                return;
+            }
+
+            // Validate pending removal hasn't expired (5 minute timeout)
+            const CONFIRMATION_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+            if (Date.now() - pendingRemoval.timestamp > CONFIRMATION_TIMEOUT) {
+                showNotification('Confirmation expired. Please try again.', 'warning');
+                closeConfirmationModal();
+                return;
+            }
+
+            const { teamId, tableId, slot, teamName } = pendingRemoval;
+
+            try {
+                // Show loading state in modal
+                const confirmBtn = document.getElementById('confirmRemoveBtn');
+                confirmBtn.disabled = true;
+                confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Removing...';
+
+                // Show loading state on delete button
+                const deleteBtn = document.querySelector(`tr[data-team-id="${teamId}"] .team-delete-btn`);
+                if (deleteBtn) {
+                    deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    deleteBtn.disabled = true;
+                    deleteBtn.classList.add('removing');
+                }
+
+                const session = getSessionData();
+                const authToken = session ? session.token : null;
+                if (!authToken) {
+                    throw new Error('Authentication token not found. Please log in again.');
+                }
+
+                // Make API call to remove team from tournament using the correct admin endpoint
+                const response = await fetch(`${API_BASE_URL}/api/tournaments/${tournamentSlug}/participants/${teamId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || 'Failed to remove team from tournament');
+                }
+
+                const result = await response.json();
+
+                // Close modal
+                closeConfirmationModal();
+
+                showNotification(result.message || 'Team removed successfully!', 'success');
+
+                // Reload data to reflect the change
+                await loadTournamentBrackets();
+
+            } catch (error) {
+                console.error('Error removing team:', error);
+
+                // Check if it's a network error and offer retry
+                if (error.message.includes('Failed to fetch') || error.message.includes('Network')) {
+                    showNotificationWithRetry(
+                        'Network error occurred. Please check your connection and try again.',
+                        'error',
+                        () => confirmTeamRemoval()
+                    );
+                } else if (error.message.includes('Authentication') || error.message.includes('401')) {
+                    showNotification('Authentication expired. Please refresh the page and try again.', 'error');
+                } else if (error.message.includes('403') || error.message.includes('Forbidden')) {
+                    showNotification('Access denied. Admin privileges required.', 'error');
+                } else {
+                    showNotification(error.message || 'Failed to remove team. Please try again.', 'error');
+                }
+
+                // Reset modal button state
+                const confirmBtn = document.getElementById('confirmRemoveBtn');
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = '<i class="fas fa-trash"></i> Remove Team';
+
+                // Reset delete button state on error
+                const deleteBtn = document.querySelector(`tr[data-team-id="${teamId}"] .team-delete-btn`);
+                if (deleteBtn) {
+                    deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+                    deleteBtn.disabled = false;
+                    deleteBtn.classList.remove('removing');
+                }
+            }
+        }
+
+        function removeParticipantFromUI(teamId, teamName) {
+            // Remove participant row from display
+            const teamRow = document.querySelector(`tr[data-team-id="${teamId}"]`);
+            if (teamRow) {
+                teamRow.style.transition = 'opacity 0.3s ease';
+                teamRow.style.opacity = '0';
+                setTimeout(() => {
+                    teamRow.remove();
+                    checkForEmptyTables();
+                }, 300);
+            }
+        }
+
+        function updateParticipantCounts(newCount) {
+            // Update participant count displays
+            const countElements = document.querySelectorAll('.match-count');
+            countElements.forEach(element => {
+                const currentText = element.textContent;
+                const parts = currentText.split('/');
+                if (parts.length === 2) {
+                    element.textContent = `${newCount}/${parts[1]}`;
+                }
+            });
+
+            // Update tournament statistics
+            const statElements = document.querySelectorAll('.stat-number');
+            statElements.forEach(element => {
+                const parentCard = element.closest('.stat-card');
+                if (parentCard && parentCard.querySelector('.stat-label').textContent.includes('Participants')) {
+                    element.textContent = newCount;
+                }
+            });
+        }
+
+        function checkForEmptyTables() {
+            // Check if any tables are now empty and show appropriate message
+            const tables = document.querySelectorAll('.match-table');
+            tables.forEach(table => {
+                const rows = table.querySelectorAll('tbody tr');
+                const hasTeams = Array.from(rows).some(row => {
+                    const teamCell = row.querySelector('.match-teams');
+                    return teamCell && !teamCell.textContent.includes('TBD') && !teamCell.textContent.includes('Empty');
+                });
+
+                if (!hasTeams && rows.length > 0) {
+                    // Add empty state message
+                    const tbody = table.querySelector('tbody');
+                    if (tbody && !tbody.querySelector('.empty-state')) {
+                        const emptyRow = document.createElement('tr');
+                        emptyRow.className = 'empty-state';
+                        emptyRow.innerHTML = `
+                            <td colspan="100%" style="text-align: center; padding: 2rem; color: var(--text-secondary); font-style: italic;">
+                                <i class="fas fa-users-slash" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                                No teams in this section
+                            </td>
+                        `;
+                        tbody.appendChild(emptyRow);
+                    }
+                }
+            });
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 10000;
+                max-width: 300px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                transition: all 0.3s ease;
+            `;
+
+            // Set background color based on type
+            switch (type) {
+                case 'success':
+                    notification.style.background = '#10b981';
+                    break;
+                case 'error':
+                    notification.style.background = '#ef4444';
+                    break;
+                case 'warning':
+                    notification.style.background = '#f59e0b';
+                    break;
+                default:
+                    notification.style.background = '#3b82f6';
+            }
+
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            // Auto remove after 4 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 4000);
+        }
+
+        function showNotificationWithRetry(message, type, retryCallback) {
+            // Create notification element with retry button
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                color: white;
+                background: ${type === 'error' ? '#ef4444' : '#10b981'};
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 10001;
+                max-width: 400px;
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                font-weight: 600;
+            `;
+
+            notification.innerHTML = `
+                <div style="flex: 1;">
+                    <i class="fas fa-exclamation-triangle" style="margin-right: 0.5rem;"></i>
+                    ${message}
+                </div>
+                <button class="retry-btn" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); 
+                               color: white; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; 
+                               font-size: 0.9rem; transition: background 0.3s ease; font-weight: 600;">
+                    <i class="fas fa-redo"></i> Retry
+                </button>
+                <button class="close-btn" style="background: none; border: none; color: white; cursor: pointer; 
+                               font-size: 1.2rem; padding: 0.25rem;">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+
+            // Add event listeners
+            notification.querySelector('.retry-btn').addEventListener('click', () => {
+                notification.remove();
+                retryCallback();
+            });
+
+            notification.querySelector('.close-btn').addEventListener('click', () => {
+                notification.remove();
+            });
+
+            // Add hover effects
+            const retryBtn = notification.querySelector('.retry-btn');
+            retryBtn.addEventListener('mouseover', () => {
+                retryBtn.style.background = 'rgba(255,255,255,0.3)';
+            });
+            retryBtn.addEventListener('mouseout', () => {
+                retryBtn.style.background = 'rgba(255,255,255,0.2)';
+            });
+
+            document.body.appendChild(notification);
+
+            // Auto-remove notification after 10 seconds (longer for retry notifications)
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 10000);
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,258 @@
+/**
+ * Centralized API Client for Host Dashboard
+ * Handles all API communications with proper error handling and retry logic
+ */
+
+class ApiClient {
+  constructor() {
+    this.baseURL = this.getBaseURL();
+    this.token = localStorage.getItem('auth_token');
+    this.retryAttempts = 3;
+    this.retryDelay = 1000; // 1 second
+  }
+
+  /**
+   * Get base URL based on environment
+   */
+  getBaseURL() {
+    const isLocal = window.location.hostname === 'localhost' || 
+                   window.location.hostname === '127.0.0.1' || 
+                   window.location.protocol === 'file:';
+    return isLocal ? 'http://localhost:8000' : 'https://t2-237c.onrender.com';
+  }
+
+  /**
+   * Set authentication token
+   */
+  setToken(token) {
+    this.token = token;
+    localStorage.setItem('auth_token', token);
+  }
+
+  /**
+   * Clear authentication token
+   */
+  clearToken() {
+    this.token = null;
+    localStorage.removeItem('auth_token');
+    // Also remove user_data on logout
+    localStorage.removeItem('user_data');
+  }
+
+  /**
+   * Get default headers
+   */
+  getHeaders() {
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`;
+    }
+
+    return headers;
+  }
+
+  /**
+   * Make HTTP request with retry logic
+   */
+  async request(endpoint, options = {}) {
+    const url = `${this.baseURL}${endpoint}`;
+    
+    let config = {
+      headers: this.getHeaders(),
+      ...options,
+    };
+    
+    if (options.body instanceof FormData) {
+      delete config.headers['Content-Type'];
+    }
+
+    for (let attempt = 1; attempt <= this.retryAttempts; attempt++) {
+      try {
+        const response = await fetch(url, config);
+        
+        if (response.status === 401) {
+          this.clearToken();
+          window.location.href = '/auth.html';
+          throw new ApiError('Authentication required. Please log in again.', 401);
+        }
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new ApiError(
+            errorData.detail || errorData.message || `HTTP ${response.status}: ${response.statusText}`,
+            response.status,
+            errorData
+          );
+        }
+        
+        // Handle responses that might not have a body (like CSV download)
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("text/csv")) {
+            return response.blob();
+        }
+        
+        if (response.status === 204) {
+            return { success: true, data: null };
+        }
+
+        return await response.json();
+      } catch (error) {
+        if (error instanceof ApiError && error.status >= 400 && error.status < 500) {
+          throw error;
+        }
+
+        if (attempt === this.retryAttempts) {
+          throw error instanceof ApiError ? error : new ApiError('Network error or server is unavailable.', 0, { originalError: error });
+        }
+
+        await this.delay(this.retryDelay * attempt);
+      }
+    }
+  }
+
+  async get(endpoint, params = {}) {
+    const queryString = new URLSearchParams(Object.entries(params).filter(([_, v]) => v != null)).toString();
+    const url = queryString ? `${endpoint}?${queryString}` : endpoint;
+    return this.request(url, { method: 'GET' });
+  }
+
+  async post(endpoint, data) {
+    if (data instanceof FormData) {
+        return this.request(endpoint, {
+            method: 'POST',
+            body: data,
+        });
+    }
+    return this.request(endpoint, {
+        method: 'POST',
+        body: JSON.stringify(data),
+    });
+  }
+  
+  async put(endpoint, data = {}) {
+    return this.request(endpoint, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async patch(endpoint, data = {}) {
+    return this.request(endpoint, {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+    });
+  }
+
+  async delete(endpoint) {
+    return this.request(endpoint, { method: 'DELETE' });
+  }
+
+  delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // === HOST DASHBOARD SPECIFIC ENDPOINTS ===
+
+  async getDashboardMetrics() {
+    return this.get('/api/host/dashboard/metrics');
+  }
+
+  async getRecentTournaments() {
+    return this.get('/api/host/tournaments/recent');
+  }
+  
+  async getHostProfile() {
+    return this.get('/api/host/profile');
+  }
+
+  async getTournaments(params = {}) {
+    return this.get('/api/host/tournaments', params);
+  }
+
+  async createTournament(tournamentData) {
+    const formData = new FormData();
+    for (const key in tournamentData) {
+        if (tournamentData[key] !== null && tournamentData[key] !== undefined) {
+             formData.append(key, tournamentData[key]);
+        }
+    }
+    return this.post('/api/tournaments', formData);
+  }
+
+  async updateTournament(tournamentId, tournamentData) {
+    return this.put(`/api/host/tournaments/${tournamentId}`, tournamentData);
+  }
+
+  async deleteTournament(tournamentId) {
+    return this.delete(`/api/host/tournaments/${tournamentId}`);
+  }
+
+  async getTournamentParticipants(tournamentId) {
+    return this.get(`/api/host/tournaments/${tournamentId}/participants`);
+  }
+
+  async updateParticipantStatus(tournamentId, participantId, status) {
+    return this.put(`/api/host/tournaments/${tournamentId}/participants/${participantId}/status`, { status });
+  }
+
+  async exportParticipantsCSV(tournamentId) {
+    return this.request(`/api/host/tournaments/${tournamentId}/export/csv`, { method: 'GET' });
+  }
+  
+  async getWalletInfo() {
+    return this.get('/api/host/wallet');
+  }
+
+  async getTransactions(params = {}) {
+    return this.get('/api/host/wallet/transactions', params);
+  }
+
+  async requestWithdrawal(withdrawalData) {
+    return this.post('/api/host/wallet/withdraw', withdrawalData);
+  }
+
+  // --- ANALYTICS ---
+  async getRevenueAnalytics(days = 90) {
+    return this.get('/api/host/analytics/revenue', { days });
+  }
+
+  async getParticipantAnalytics(days = 90) {
+    return this.get('/api/host/analytics/participants', { days });
+  }
+
+  // --- NOTIFICATIONS ---
+  async getNotifications(params = {}) {
+    return this.get('/api/notifications', params);
+  }
+  
+  async markNotificationRead(notificationId) {
+    return this.patch(`/api/notifications/${notificationId}/read`);
+  }
+  
+  async markAllNotificationsRead() {
+    return this.patch('/api/notifications/read-all');
+  }
+}
+
+/**
+ * Custom API Error class
+ */
+class ApiError extends Error {
+  constructor(message, status = 0, data = {}) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.data = data;
+  }
+}
+
+// Create singleton instance
+const apiClient = new ApiClient();
+
+// Export for use throughout the application
+window.ApiClient = ApiClient;
+window.ApiError = ApiError;
+window.apiClient = apiClient;

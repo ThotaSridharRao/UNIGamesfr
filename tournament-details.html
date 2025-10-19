@@ -1,0 +1,2844 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">Tournament Details | Uni Games</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="ug.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity=""
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.1/dist/dotlottie-wc.js" type="module"></script>
+
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* =========================
+       NAVBAR STYLES (Modern Design)
+       ========================= */
+    .nav-normal {
+      background: rgba(13, 10, 26, 0.1);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 0.5rem 2rem;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+      transform: translateY(0);
+    }
+
+    .nav-normal.nav-hidden {
+      transform: translateY(-100%);
+    }
+
+    .nav-normal.nav-scrolled {
+      background: rgba(13, 10, 26, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      text-decoration: none;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      height: 80px;
+      width: auto;
+      margin: 0;
+      padding: 0;
+      display: block;
+    }
+
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0;
+      list-style: none;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-links li {
+      position: relative;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      padding: 0.6rem 1.2rem;
+      display: block;
+    }
+
+    .nav-links a:hover {
+      color: white;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 0.65rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .btn-request {
+      background: white;
+      color: #0a0a0a;
+    }
+
+    .btn-request:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-logout {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-logout:hover {
+      background: rgba(239, 68, 68, 0.25);
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-secondary) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .user-name {
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    #user-menu {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+
+    .menu-icon {
+      width: 24px;
+      height: 20px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .menu-icon span {
+      width: 100%;
+      height: 2px;
+      background: white;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .menu-toggle.active .menu-icon span:nth-child(1) {
+      transform: rotate(45deg) translate(7px, 7px);
+    }
+
+    .menu-toggle.active .menu-icon span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .menu-toggle.active .menu-icon span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -7px);
+    }
+
+    /* Mobile Styles */
+    @media (max-width: 968px) {
+      .menu-toggle {
+        display: block;
+      }
+
+      .nav-center {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        height: 100vh;
+        width: 85%;
+        max-width: 350px;
+        flex-direction: column;
+        background: rgba(15, 15, 15, 0.98);
+        backdrop-filter: blur(20px);
+        padding: 6rem 2rem 2rem;
+        gap: 0;
+        transition: right 0.3s ease;
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+        align-items: flex-start;
+        overflow-y: auto;
+      }
+
+      .nav-center.active {
+        right: 0;
+      }
+
+      .nav-links {
+        flex-direction: column;
+        width: 100%;
+        gap: 0;
+      }
+
+      .nav-links li {
+        width: 100%;
+      }
+
+      .nav-links a {
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .auth-buttons {
+        flex-direction: column;
+        width: 100%;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      .user-info {
+        width: 100%;
+        justify-content: center;
+      }
+
+      #user-menu {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 1rem;
+      }
+    }
+
+    /* =========================
+       Theme variables (Cyberpunk)
+       ========================= */
+    :root {
+      --primary-color: #0AFAD9;
+      /* Electric Cyan */
+      --bg-dark: #0D0A1A;
+      /* Dark Matter Black */
+      --accent-secondary: #5D3FD3;
+      /* Deep Indigo */
+      --panel: #161329;
+      /* Dark Indigo Panel */
+      --text-primary: #F0F0F0;
+      /* Starlight White */
+      --text-secondary: rgba(240, 240, 240, 0.7);
+      --border-color: rgba(10, 250, 217, 0.2);
+      --ease: 0.3s ease;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --container: 1200px;
+
+      /* Legacy variables for compatibility */
+      --copy: var(--text-primary);
+      --muted: var(--text-secondary);
+      --accent: var(--accent-secondary);
+      /* Using Indigo as main accent */
+      --accent-2: var(--primary-color);
+      /* Using Cyan as secondary accent */
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(94%, var(--container));
+      margin: 0 auto;
+    }
+
+    main {
+      /* Adjust for fixed header */
+      min-height: 100vh;
+    }
+
+    /* Loader */
+    #loader-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-dark);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+
+    #loader-wrapper.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Tournament Hero */
+    .tournament-hero {
+      position: relative;
+      height: 60vh;
+      min-height: 450px;
+      background-size: cover;
+      background-position: center top;
+      display: flex;
+      align-items: flex-end;
+      padding: 4rem 0;
+      margin-top: 60px;
+      color: var(--text-primary);
+    }
+
+    .tournament-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, var(--bg-dark) 15%, rgba(13, 10, 26, 0.4) 100%);
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+    }
+
+    .tournament-title {
+      font-size: clamp(3.5rem, 6vw, 4.5rem);
+      /* Increased size to fill space */
+      font-weight: 800;
+      margin-bottom: 0;
+      /* Removed bottom margin */
+      line-height: 1.1;
+    }
+
+    .tournament-subtitle {
+      /* REMOVED: This is now hidden */
+      display: none;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      /* Added margin for space */
+    }
+
+    .btn-primary {
+      padding: 0.9rem 2rem;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--primary-color);
+      color: var(--bg-dark);
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background: #50FDE5;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(10, 250, 217, 0.2);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      padding: 0.9rem 2rem;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      margin-left: 1rem;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: var(--primary-color);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(10, 250, 217, 0.2);
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    /* Custom Scrollbar Design */
+    .scrollbar {
+      margin-left: 30px;
+      float: left;
+      height: 300px;
+      width: 65px;
+      background: #F5F5F5;
+      overflow-y: scroll;
+      margin-bottom: 25px;
+    }
+
+    .force-overflow {
+      min-height: 450px;
+    }
+
+    /* Custom Scrollbar Styles */
+    ::-webkit-scrollbar-track {
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-dark);
+    }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+      background-color: var(--bg-dark);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: var(--panel);
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: var(--accent-secondary);
+    }
+
+    /* Firefox scrollbar */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--panel) var(--bg-dark);
+    }
+
+    .btn-success {
+      background: #10b981;
+      color: #fff;
+      cursor: default;
+    }
+
+    .btn-success:hover {
+      transform: none;
+      box-shadow: none;
+      background: #10b981;
+    }
+
+    /* Details Section */
+    .tournament-details {
+      padding: 4rem 0;
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 3rem;
+    }
+
+    .details-main,
+    .info-card {
+      background: var(--panel);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 2rem;
+    }
+
+    .details-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .info-card h3 {
+      color: var(--primary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .info-list {
+      list-style: none;
+    }
+
+    .info-list li {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .info-list li:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      color: var(--text-secondary);
+    }
+
+    .info-value {
+      font-weight: 600;
+    }
+
+    .details-main h2,
+    .details-main h3 {
+      color: var(--primary-color);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+      /* Increased size */
+    }
+
+    #tournament-overview p,
+    #tournament-format-details p,
+    #tournament-format-details ul li {
+      font-size: 1.05rem;
+      /* Increased size */
+      line-height: 1.7;
+    }
+
+    /* Section Headers */
+    .section-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .section-title {
+      font-size: clamp(2.2rem, 5vw, 3rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+
+    .section-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Leaderboard / Finalists */
+    .leaderboard-section {
+      padding: 4rem 0;
+    }
+
+    /* Finalists Table - Same design as Schedule Table */
+    .finalists-table-container {
+      background: var(--panel);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-top: 2rem;
+    }
+
+    .finalists-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .finalists-table th,
+    .finalists-table td {
+      padding: 1rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+    }
+
+    .finalists-table th:last-child,
+    .finalists-table td:last-child {
+      border-right: none;
+    }
+
+    .finalists-table th:nth-child(1),
+    .finalists-table td:nth-child(1),
+    .finalists-table th:nth-child(3),
+    .finalists-table td:nth-child(3) {
+      width: 80px;
+    }
+
+    .finalists-table th:nth-child(2),
+    .finalists-table td:nth-child(2),
+    .finalists-table th:nth-child(4),
+    .finalists-table td:nth-child(4) {
+      width: auto;
+    }
+
+    /* Add thicker border between the two sections */
+    .finalists-table th:nth-child(2),
+    .finalists-table td:nth-child(2) {
+      border-right: 2px solid var(--primary-color);
+    }
+
+    .finalists-table th {
+      background: rgba(15, 133, 211, 0.1);
+      color: var(--primary-color);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .finalists-table td {
+      background: transparent;
+      color: var(--text-primary);
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+
+
+    .finalists-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .empty-finalists {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-secondary);
+    }
+
+    /* Bigger font size for larger screens */
+    @media (min-width: 1200px) {
+      .finalists-table th {
+        font-size: 1.3rem;
+        padding: 1.5rem;
+      }
+
+      .finalists-table td {
+        font-size: 1.2rem;
+        padding: 1.5rem;
+      }
+    }
+
+    @media (min-width: 1920px) {
+      .finalists-table th {
+        font-size: 1.4rem;
+        padding: 2rem;
+      }
+
+      .finalists-table td {
+        font-size: 1.3rem;
+        padding: 2rem;
+      }
+    }
+
+    /* Responsive design for finalists table */
+    @media (max-width: 768px) {
+
+      .finalists-table th,
+      .finalists-table td {
+        padding: 0.75rem 0.25rem;
+        font-size: 0.85rem;
+      }
+
+      .finalists-table th:nth-child(1),
+      .finalists-table td:nth-child(1),
+      .finalists-table th:nth-child(3),
+      .finalists-table td:nth-child(3) {
+        width: 50px;
+      }
+    }
+
+    @media (max-width: 480px) {
+
+      .finalists-table th,
+      .finalists-table td {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.8rem;
+      }
+
+      .finalists-table th:nth-child(1),
+      .finalists-table td:nth-child(1),
+      .finalists-table th:nth-child(3),
+      .finalists-table td:nth-child(3) {
+        width: 40px;
+      }
+    }
+
+    /* Schedule Section (Custom styles for table structure) */
+    .schedule-section {
+      padding: 4rem 0;
+    }
+
+    .schedule-table-container {
+      background: var(--panel);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      overflow-x: auto;
+      /* Allow horizontal scroll on mobile */
+      max-width: 800px;
+      margin: 2rem auto;
+    }
+
+    .schedule-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px;
+      /* Ensure table looks good on mobile */
+    }
+
+    .schedule-table th,
+    .schedule-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .schedule-table th {
+      color: var(--primary-color);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .schedule-table td {
+      color: var(--text-primary);
+      font-size: 1rem;
+      /* Highlight current and past events */
+      transition: background-color 0.3s ease;
+    }
+
+    .schedule-table tr:hover {
+      background-color: rgba(10, 250, 217, 0.05);
+    }
+
+    .schedule-table .current-row {
+      background-color: rgba(0, 191, 255, 0.1);
+      /* Light Cyan background for current */
+      font-weight: 700;
+    }
+
+    .schedule-table .completed-row td {
+      color: var(--text-secondary);
+      /* Dim text for completed events */
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+
+
+    /* FAQ Section */
+    .faq-section {
+      padding: 4rem 0;
+    }
+
+    .faq-grid {
+      max-width: 800px;
+      margin: 3rem auto 0;
+      text-align: left;
+    }
+
+    .faq-item {
+      background: var(--panel);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+    }
+
+    .faq-item:hover {
+      border-color: var(--primary-color);
+      transform: translateY(-3px);
+    }
+
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      color: var(--text-primary);
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-align: left;
+    }
+
+    .faq-question:hover span {
+      color: var(--primary-color);
+    }
+
+    .faq-question i {
+      transition: transform 0.3s ease;
+      color: var(--primary-color);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+    }
+
+    .faq-answer p {
+      color: var(--text-secondary);
+      padding: 0 1.5rem 1.5rem 1.5rem;
+      margin: 0;
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 200px;
+    }
+
+    .faq-item.active .faq-question i {
+      transform: rotate(45deg);
+    }
+
+    @media (max-width: 768px) {
+      .faq-section {
+        padding: 3rem 1rem;
+      }
+
+      .faq-title {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .faq-grid {
+        max-width: 100%;
+        padding: 0 0.5rem;
+      }
+
+      .faq-item {
+        margin-bottom: 0.75rem;
+      }
+
+      .faq-question {
+        padding: 1rem;
+        font-size: 0.95rem;
+      }
+
+      .faq-question span {
+        padding-right: 1rem;
+        line-height: 1.4;
+      }
+
+      .faq-question i {
+        font-size: 1rem;
+        flex-shrink: 0;
+      }
+
+      .faq-answer p {
+        padding: 0 1rem 1rem 1rem;
+        font-size: 0.9rem;
+        line-height: 1.6;
+      }
+
+      .faq-item.active .faq-answer {
+        max-height: 300px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .faq-section {
+        padding: 2.5rem 0.75rem;
+      }
+
+      .faq-title {
+        font-size: 1.75rem;
+      }
+
+      .faq-question {
+        padding: 0.875rem;
+        font-size: 0.9rem;
+      }
+
+      .faq-answer p {
+        padding: 0 0.875rem 0.875rem 0.875rem;
+        font-size: 0.85rem;
+      }
+    }
+
+    /* Footer */
+    footer.site-footer {
+      background: #070707;
+      padding: 5rem 2rem 2rem;
+      text-align: center;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .footer-grid {
+      max-width: 1200px;
+      margin: 0 auto 3rem auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2.5rem;
+      text-align: left;
+    }
+
+    .footer-column h4 {
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .footer-column ul a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      display: block;
+      margin-bottom: 0.75rem;
+      font-size: 1rem;
+    }
+
+    .footer-column ul a:hover {
+      color: var(--primary-color);
+    }
+
+    .footer-brand .brand {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .footer-brand p {
+      margin-bottom: 1.5rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .social-links a {
+      color: var(--text-secondary);
+      font-size: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .social-links a:hover {
+      color: var(--primary-color);
+      transform: translateY(-3px);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border-color);
+      padding-top: 2rem;
+      opacity: 0.7;
+      font-size: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .footer-grid {
+        grid-template-columns: 1fr;
+        text-align: left;
+        gap: 2rem;
+      }
+
+      .footer-column:not(.footer-brand) {
+        display: none;
+      }
+
+      .social-links {
+        justify-content: flex-start;
+      }
+      
+      .footer-brand .brand {
+        justify-content: flex-start;
+      }
+    }
+
+    /* --- RESPONSIVENESS --- */
+    @media (max-width: 480px) {
+      .container {
+        width: min(96%, var(--container));
+      }
+
+      .tournament-title {
+        font-size: clamp(2.5rem, 8vw, 3.5rem);
+      }
+
+      .hero-actions {
+        gap: 0.75rem;
+      }
+
+      .btn-primary,
+      .btn-secondary {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+      }
+
+      .section-title {
+        font-size: clamp(1.8rem, 6vw, 2.2rem);
+      }
+
+      .details-main,
+      .info-card {
+        padding: 1.5rem;
+      }
+
+      .schedule-table th,
+      .schedule-table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .faq-question {
+        padding: 1rem;
+        font-size: 1rem;
+      }
+    }
+
+    @media (max-width: 920px) {
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-actions {
+        flex-direction: column;
+      }
+
+      .btn-primary,
+      .btn-secondary {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+        margin-left: 0;
+        margin-top: 0.5rem;
+      }
+
+      /* Finalists table is already responsive with CSS above */
+
+      .schedule-table-container {
+        margin: 1rem 0;
+      }
+
+      .schedule-table th,
+      .schedule-table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (min-width: 769px) {
+
+      /* Apply only on desktop */
+      .nav-actions {
+        padding-left: 1.5rem;
+        margin-left: 1.5rem;
+        border-left: 1px solid var(--border-color);
+      }
+    }
+
+    @media (min-width: 1600px) {
+      :root {
+        --container: 1400px;
+      }
+
+      .tournament-hero {
+        height: 70vh;
+        min-height: 600px;
+        margin-top: 80px;
+      }
+
+      .tournament-title {
+        font-size: clamp(3.5rem, 6vw, 4.5rem);
+      }
+
+      .tournament-subtitle {
+        font-size: 1.3rem;
+      }
+
+      .details-grid {
+        gap: 4rem;
+      }
+
+      .details-main,
+      .info-card {
+        padding: 3rem;
+      }
+
+      .section-title {
+        font-size: clamp(2.5rem, 5vw, 3.5rem);
+      }
+    }
+
+    @media (min-width: 1920px) {
+      :root {
+        --container: 1600px;
+      }
+
+      .tournament-details,
+      .leaderboard-section,
+      .schedule-section,
+      .faq-section {
+        padding: 5rem 0;
+      }
+
+      /* Finalists table responsive design handled above */
+
+      .faq-grid {
+        max-width: 1200px;
+      }
+
+      .details-main h2,
+      .details-main h3 {
+        font-size: 1.6rem;
+      }
+
+      #tournament-overview p,
+      #tournament-format-details p,
+      #tournament-format-details ul li {
+        font-size: 1.15rem;
+      }
+    }
+
+    @media (min-width: 2560px) {
+      :root {
+        --container: 1800px;
+      }
+
+      .tournament-hero {
+        height: 75vh;
+        min-height: 800px;
+      }
+
+      .tournament-title {
+        font-size: clamp(4rem, 7vw, 5.5rem);
+      }
+
+      /* Finalists table responsive design handled above */
+    }
+    /* Schedule Section Responsive */
+    @media (max-width: 768px) {
+      .schedule-section {
+        padding: 3rem 1rem;
+      }
+
+      .schedule-section .container {
+        padding: 0 1rem;
+      }
+
+      .section-title {
+        font-size: 1.8rem;
+        padding: 0 1rem;
+      }
+
+      .section-subtitle {
+        font-size: 0.95rem;
+        padding: 0 1rem;
+      }
+
+      .schedule-table-container {
+        margin: 1.5rem 1rem;
+        border-radius: 8px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .schedule-table {
+        min-width: 100%;
+        font-size: 0.9rem;
+      }
+
+      .schedule-table th,
+      .schedule-table td {
+        padding: 0.875rem 0.75rem;
+        font-size: 0.85rem;
+        white-space: nowrap;
+      }
+
+      .schedule-table th {
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+      }
+
+      /* Make table full width on mobile */
+      .schedule-table th:first-child,
+      .schedule-table td:first-child {
+        min-width: 150px;
+      }
+
+      .schedule-table th:nth-child(2),
+      .schedule-table td:nth-child(2) {
+        min-width: 100px;
+      }
+
+      .schedule-table th:nth-child(3),
+      .schedule-table td:nth-child(3) {
+        min-width: 80px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .schedule-section {
+        padding: 2.5rem 0.75rem;
+      }
+
+      .schedule-section .container {
+        padding: 0 0.75rem;
+      }
+
+      .section-title {
+        font-size: 1.6rem;
+        padding: 0 0.5rem;
+      }
+
+      .section-subtitle {
+        font-size: 0.9rem;
+        padding: 0 0.5rem;
+      }
+
+      .schedule-table-container {
+        margin: 1rem 0.5rem;
+        border-radius: 6px;
+      }
+
+      .schedule-table th,
+      .schedule-table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.8rem;
+      }
+
+      .schedule-table th {
+        font-size: 0.75rem;
+      }
+
+      /* Adjust minimum widths for very small screens */
+      .schedule-table th:first-child,
+      .schedule-table td:first-child {
+        min-width: 130px;
+      }
+
+      .schedule-table th:nth-child(2),
+      .schedule-table td:nth-child(2) {
+        min-width: 90px;
+      }
+
+      .schedule-table th:nth-child(3),
+      .schedule-table td:nth-child(3) {
+        min-width: 70px;
+      }
+    }
+
+    /* Finalists Section Responsive */
+@media (max-width: 768px) {
+  .leaderboard-section {
+    padding: 3rem 1rem;
+  }
+
+  .leaderboard-section .container {
+    padding: 0 1rem;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+    padding: 0 1rem;
+  }
+
+  .section-subtitle {
+    font-size: 0.95rem;
+    padding: 0 1rem;
+  }
+
+  .finalists-table-container {
+    margin: 1.5rem 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .finalists-table {
+    min-width: 100%;
+    font-size: 0.9rem;
+  }
+
+  .finalists-table th,
+  .finalists-table td {
+    padding: 0.875rem 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .finalists-table th {
+    font-size: 0.95rem;
+  }
+
+  .finalists-table th:nth-child(1),
+  .finalists-table td:nth-child(1),
+  .finalists-table th:nth-child(3),
+  .finalists-table td:nth-child(3) {
+    width: 60px;
+    min-width: 60px;
+  }
+
+  .finalists-table th:nth-child(2),
+  .finalists-table td:nth-child(2),
+  .finalists-table th:nth-child(4),
+  .finalists-table td:nth-child(4) {
+    min-width: 120px;
+  }
+
+  .empty-finalists {
+    padding: 2rem 1rem;
+  }
+
+  .empty-finalists i {
+    font-size: 2rem;
+  }
+
+  .empty-finalists p {
+    font-size: 0.9rem;
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .leaderboard-section {
+    padding: 2.5rem 0.75rem;
+  }
+
+  .leaderboard-section .container {
+    padding: 0 0.75rem;
+  }
+
+  .section-title {
+    font-size: 1.6rem;
+    padding: 0 0.5rem;
+  }
+
+  .section-subtitle {
+    font-size: 0.9rem;
+    padding: 0 0.5rem;
+  }
+
+  .finalists-table-container {
+    margin: 1rem 0.5rem;
+    border-radius: 6px;
+  }
+
+  .finalists-table th,
+  .finalists-table td {
+    padding: 0.75rem 0.35rem;
+    font-size: 0.8rem;
+  }
+
+  .finalists-table th {
+    font-size: 0.85rem;
+  }
+
+  .finalists-table th:nth-child(1),
+  .finalists-table td:nth-child(1),
+  .finalists-table th:nth-child(3),
+  .finalists-table td:nth-child(3) {
+    width: 45px;
+    min-width: 45px;
+  }
+
+  .finalists-table th:nth-child(2),
+  .finalists-table td:nth-child(2),
+  .finalists-table th:nth-child(4),
+  .finalists-table td:nth-child(4) {
+    min-width: 100px;
+  }
+
+  .empty-finalists {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .empty-finalists i {
+    font-size: 1.75rem;
+  }
+
+  .empty-finalists p {
+    font-size: 0.85rem;
+    padding: 0 0.75rem;
+  }
+}
+/* Rules Section */
+.rules-section {
+  padding: 5rem 2rem;
+  background: var(--bg-dark);
+}
+
+.rules-content {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+/* Tournament Details Section Responsive */
+@media (max-width: 920px) {
+  .details-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .details-sidebar {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .tournament-details {
+    padding: 3rem 0;
+  }
+
+  .tournament-details .container {
+    padding: 0 1rem;
+  }
+
+  .details-grid {
+    gap: 1.5rem;
+  }
+
+  .details-main,
+  .info-card {
+    padding: 1.5rem;
+  }
+
+  .details-main h2,
+  .details-main h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  #tournament-overview p,
+  #tournament-format-details p,
+  #tournament-format-details ul li {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .info-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .info-list li {
+    padding: 0.6rem 0;
+    font-size: 0.9rem;
+  }
+
+  .info-label,
+  .info-value {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tournament-details {
+    padding: 2.5rem 0;
+  }
+
+  .tournament-details .container {
+    padding: 0 0.75rem;
+  }
+
+  .details-grid {
+    gap: 1rem;
+  }
+
+  .details-main,
+  .info-card {
+    padding: 1.25rem;
+    border-radius: 8px;
+  }
+
+  .details-main h2,
+  .details-main h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.875rem;
+  }
+
+  #tournament-overview p,
+  #tournament-format-details p,
+  #tournament-format-details ul li {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .info-card h3 {
+    font-size: 1rem;
+    margin-bottom: 0.875rem;
+    padding-bottom: 0.625rem;
+    gap: 0.5rem;
+  }
+
+  .info-card h3 i {
+    font-size: 0.9rem;
+  }
+
+  .info-list li {
+    padding: 0.5rem 0;
+    font-size: 0.85rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .info-label {
+    font-size: 0.8rem;
+    opacity: 0.8;
+  }
+
+  .info-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+}
+/* Tournament Hero Responsive */
+@media (max-width: 768px) {
+  .tournament-hero {
+    height: 50vh;
+    min-height: 400px;
+    padding: 3rem 0;
+    margin-top: 60px;
+  }
+
+  .tournament-hero .container {
+    padding: 0 1rem;
+  }
+
+  .hero-content {
+    max-width: 100%;
+  }
+
+  .tournament-title {
+    font-size: clamp(2rem, 8vw, 3rem);
+    margin-bottom: 0;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    width: 100%;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    margin-left: 0;
+    padding: 0.875rem 1.5rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tournament-hero {
+    height: 45vh;
+    min-height: 350px;
+    padding: 2rem 0;
+  }
+
+  .tournament-hero .container {
+    padding: 0 0.75rem;
+  }
+
+  .tournament-title {
+    font-size: clamp(1.75rem, 7vw, 2.5rem);
+    line-height: 1.2;
+  }
+
+  .hero-actions {
+    gap: 0.5rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  .btn-primary i,
+  .btn-secondary i {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .tournament-hero {
+    min-height: 320px;
+  }
+
+  .tournament-title {
+    font-size: 1.5rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+  }
+}
+/* Info and Prizes Cards Enhanced Responsive */
+@media (max-width: 768px) {
+  .info-card {
+    padding: 1.25rem;
+  }
+
+  .info-card h3 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .info-list {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .info-list li {
+    padding: 0.875rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+  }
+
+  .info-list li:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(10, 250, 217, 0.2);
+  }
+
+  .info-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .info-value {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: right;
+  }
+}
+
+@media (max-width: 480px) {
+  .info-card {
+    padding: 1rem;
+  }
+
+  .info-card h3 {
+    font-size: 0.95rem;
+    margin-bottom: 0.875rem;
+    padding-bottom: 0.625rem;
+  }
+
+  .info-list {
+    gap: 0.625rem;
+  }
+
+  .info-list li {
+    padding: 0.75rem;
+    border-radius: 6px;
+  }
+
+  .info-label {
+    font-size: 0.8rem;
+  }
+
+  .info-value {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .info-card {
+    padding: 0.875rem;
+  }
+
+  .info-card h3 {
+    font-size: 0.9rem;
+  }
+
+  .info-list li {
+    padding: 0.625rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .info-label {
+    font-size: 0.75rem;
+    opacity: 0.7;
+  }
+
+  .info-value {
+    font-size: 0.875rem;
+    text-align: left;
+  }
+}
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.user-info:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(10, 250, 217, 0.3);
+    transform: translateY(-2px);
+}
+  </style>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            // Mapping primary color variable to Tailwind utility
+            'primary-neon': 'var(--primary-color)',
+            // Background colors based on theme variables
+            'bg-dark': 'var(--bg-dark)',
+            'bg-card': 'var(--panel)',
+            // Define a lightened neon for completed background
+            'bg-completed': 'rgba(10, 250, 217, 0.1)',
+            // Cyan for CURRENT phase text and border (use a slightly different color to distinguish)
+            'current-accent': '#00BFFF',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <div id="loader-wrapper">
+    <dotlottie-wc src="https://lottie.host/f3668d34-e871-48f2-89e1-a802d02b8429/2gMMYTNzAd.lottie"
+      style="width: 300px;height: 300px" autoplay loop></dotlottie-wc>
+  </div>
+
+  <nav class="nav-normal">
+    <div class="nav-container"><a href="index.html" class="logo">
+        <img src="ug.png" alt="Uni Games">
+      </a>
+      <div class="nav-center" id="normalNav">
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="tournaments.html">Tournaments</a></li>
+          <li><a href="dispute-support.html">Support</a></li>
+        </ul>
+        <div class="auth-buttons" id="normalAuth">
+          <div id="guest-menu"><a href="auth.html" class="btn btn-request">Join Us</a></div>
+          <div id="user-menu" style="display: none;">
+            <div class="user-info" onclick="window.location.href='userdashboard.html'" style="cursor: pointer;">
+                <div class="user-avatar" id="user-avatar">U</div>
+                <span class="user-name" id="navbar-username">User</span>
+            </div>
+            <button class="btn btn-logout" onclick="handleLogout()">Logout</button>
+          </div>
+        </div>
+      </div><button class="menu-toggle" id="normalMenuToggle">
+        <div class="menu-icon"><span></span><span></span><span></span></div>
+      </button>
+    </div>
+  </nav>
+
+  <div id="mobile-nav" class="mobile-nav"></div>
+
+  <main>
+    <section class="tournament-hero">
+      <div class="container">
+        <div class="hero-content">
+          <h1 class="tournament-title" id="tournament-title">Loading Tournament...</h1>
+          <p class="tournament-subtitle" id="tournament-subtitle">
+            <!-- This element is now hidden via CSS -->
+          </p>
+          <div class="hero-actions" id="hero-actions">
+            <button class="btn-primary" id="primary-action" disabled>
+              Loading...
+            </button>
+            <button class="btn-secondary" id="brackets-action" style="display: none;">
+              <i class="fas fa-sitemap"></i> View Brackets
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tournament-details" id="tournament-details-section">
+      <div class="container">
+        <div class="details-grid">
+          <div class="details-main">
+            <h2>Tournament Overview</h2>
+            <div id="tournament-overview">
+              <p style="color: var(--text-secondary);">Loading details...</p>
+            </div>
+            <h3 style="margin-top: 2rem;">Tournament Structure</h3>
+            <div id="tournament-format-details">
+              <p style="color: var(--text-secondary);">Loading format...</p>
+            </div>
+          </div>
+
+          <div class="details-sidebar">
+            <div class="info-card">
+              <h3><i class="fas fa-info-circle"></i> Info</h3>
+              <ul class="info-list">
+                <li><span class="info-label">Game</span><span class="info-value" id="game-name">--</span></li>
+                <li><span class="info-label">Format</span><span class="info-value" id="tournament-format">--</span></li>
+                <li><span class="info-label">Entry Fee</span><span class="info-value" id="entry-fee">--</span></li>
+                <li><span class="info-label">Max Teams</span><span class="info-value" id="max-teams">--</span></li>
+              </ul>
+            </div>
+
+            <div class="info-card">
+              <h3><i class="fas fa-trophy"></i> Prizes</h3>
+              <ul class="info-list" id="prize-list">
+                <li><span class="info-label">Total Pool</span><span class="info-value">Loading...</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="rules-section" id="rules-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Important Rules & Information</h2>
+          <p class="section-subtitle">Essential guidelines and information for tournament participants.</p>
+        </div>
+        <div class="rules-content">
+          <div style="display: grid; gap: 1.5rem; max-width: 900px; margin: 0 auto;">
+            
+            <div style="background: rgba(93, 63, 211, 0.08); padding: 1.5rem; border-radius: 12px;">
+              <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: var(--primary-color);">Team Registration</h3>
+              <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Each team can register only once per tournament. Ensure all details are correct before submitting.</p>
+            </div>
+
+            <div style="background: rgba(93, 63, 211, 0.08); padding: 1.5rem; border-radius: 12px;">
+              <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: var(--primary-color);">Match Schedule</h3>
+              <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Check the Brackets page for your match times and opponents. All match schedules are updated in real-time.</p>
+            </div>
+
+            <div style="background: rgba(93, 63, 211, 0.08); padding: 1.5rem; border-radius: 12px;">
+              <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: var(--primary-color);">Room Details</h3>
+              <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Room ID and password will be shared on the Brackets page at your scheduled match time. Be ready 10 minutes before your match.</p>
+            </div>
+
+            <div style="background: rgba(93, 63, 211, 0.08); padding: 1.5rem; border-radius: 12px;">
+              <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: var(--primary-color);">Brackets Access</h3>
+              <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Use the "View Brackets" button above to access live tournament brackets and track your progress.</p>
+            </div>
+
+            <div style="background: rgba(93, 63, 211, 0.08); padding: 1.5rem; border-radius: 12px;">
+              <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: var(--primary-color);">Fair Play</h3>
+              <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Follow tournament rules and maintain sportsmanlike conduct throughout the competition.</p>
+            </div>
+
+            <div style="background: rgba(93, 63, 211, 0.08); padding: 1.5rem; border-radius: 12px;">
+              <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: var(--primary-color);">Technical Issues</h3>
+              <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Report any technical problems immediately through the support system. Screenshots or recordings may be required for dispute resolution.</p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="leaderboard-section" id="finalists-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Finalists</h2>
+          <p class="section-subtitle">The top teams who battled it out for glory.</p>
+        </div>
+        <div class="finalists-table-container" id="finalists-table">
+          <div id="finalists-content">
+            <div class="empty-finalists">
+              <i class="fas fa-trophy" style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+              <p>Final standings will appear here once the tournament concludes.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="schedule-section" id="schedule-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Event Schedule</h2>
+          <p class="section-subtitle">A simple, chronological listing of all key dates and times.</p>
+        </div>
+
+        <!-- NEW SCHEDULE TABLE STRUCTURE -->
+        <div id="timeline-container" class="schedule-table-container">
+          <table id="event-list" class="schedule-table">
+            <thead>
+              <tr>
+                <th>Event Name</th>
+                <th>Date</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="3" style="text-align:center; color: var(--text-secondary); padding: 2rem;">Loading
+                  schedule...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- END NEW SCHEDULE TABLE STRUCTURE -->
+
+      </div>
+    </section>
+
+    <section class="faq-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Frequently Asked Questions</h2>
+        </div>
+        <div class="faq-grid">
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>What do I need to get started?</span>
+              <i class="fas fa-plus"></i>
+            </button>
+            <div class="faq-answer">
+              <p>All you need is a Uni Games account and the game you want to compete in! Check the specific
+                tournament rules for any additional requirements, but generally, it's that simple to start your
+                competitive journey.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>How are prizes awarded?</span>
+              <i class="fas fa-plus"></i>
+            </button>
+            <div class="faq-answer">
+              <p>Prizes are typically awarded within 7-14 business days after a tournament concludes and results are
+                verified. Winnings are sent via the payment method you have on file in your user account.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>What is the fair play policy?</span>
+              <i class="fas fa-plus"></i>
+            </button>
+            <div class="faq-answer">
+              <p>We have a zero-tolerance policy for cheating, hacking, or any form of unsportsmanlike conduct. All
+                players must adhere to our code of conduct, and we use advanced anti-cheat software to ensure a fair
+                playing field.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>Can I stream my matches?</span>
+              <i class="fas fa-plus"></i>
+            </button>
+            <div class="faq-answer">
+              <p>Absolutely! We encourage players to stream their matches. Just be sure to check the specific tournament
+                rules, as some events may have restrictions or require a stream delay.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-column footer-brand">
+          <a href="index.html" class="brand" style="display: flex; align-items: center; gap: 0.5rem;">
+            <img src="ug.png" alt="Uni Games" style="height: 60px; width: auto;">
+            Uni Games
+          </a>
+          <p>The ultimate destination for competitive gaming.</p>
+          <div class="social-links">
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="Youtube"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h4>Tournaments</h4>
+          <ul>
+            <li><a href="tournaments.html">Browse All</a></li>
+            <li><a href="tournaments.html?filter=live">Live Matches</a></li>
+            <li><a href="tournaments.html?filter=upcoming">Upcoming</a></li>
+            <li><a href="tournaments.html?filter=completed">Past Results</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Community</h4>
+          <ul>
+            <li><a href="#">Discord</a></li>
+            <li><a href="#">Forums</a></li>
+            <li><a href="#">Support</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 Uni Games. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // --- NAVBAR HELPER FUNCTIONS ---
+    function redirectToAuth(tab = 'register') {
+      const returnUrl = encodeURIComponent(window.location.href);
+      window.location.href = `auth.html?tab=${tab}&returnUrl=${returnUrl}`;
+    }
+
+    // Modern Navbar Functions
+    let isLoggedIn = false;
+
+    // Mobile menu toggle
+    const normalMenuToggle = document.getElementById('normalMenuToggle');
+    const normalNav = document.getElementById('normalNav');
+
+    if (normalMenuToggle && normalNav) {
+      normalMenuToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        normalMenuToggle.classList.toggle('active');
+        normalNav.classList.toggle('active');
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.nav-normal') && normalNav.classList.contains('active')) {
+          normalNav.classList.remove('active');
+          normalMenuToggle.classList.remove('active');
+        }
+      });
+    }
+
+    // Handle logout
+    function handleLogout() {
+      if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('nexus_session');
+        sessionStorage.removeItem('nexus_session');
+        window.location.href = 'auth.html';
+      }
+    }
+
+    // Smart Navbar Scroll Behavior
+    function initSmartNavbar() {
+      const navbar = document.querySelector('.nav-normal');
+      if (!navbar) return;
+
+      let lastScrollY = window.scrollY;
+      let ticking = false;
+
+      function updateNavbar() {
+        const currentScrollY = window.scrollY;
+
+        // Add scrolled class when user has scrolled down
+        if (currentScrollY > 50) {
+          navbar.classList.add('nav-scrolled');
+        } else {
+          navbar.classList.remove('nav-scrolled');
+        }
+
+        // Hide/show navbar based on scroll direction
+        if (currentScrollY > 100) { // Only start hiding after scrolling 100px
+          if (currentScrollY > lastScrollY && currentScrollY > 200) {
+            // Scrolling down - hide navbar
+            navbar.classList.add('nav-hidden');
+          } else {
+            // Scrolling up - show navbar
+            navbar.classList.remove('nav-hidden');
+          }
+        } else {
+          // Always show navbar when near top
+          navbar.classList.remove('nav-hidden');
+        }
+
+        lastScrollY = currentScrollY;
+        ticking = false;
+      }
+
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(updateNavbar);
+          ticking = true;
+        }
+      }
+
+      // Listen for scroll events
+      window.addEventListener('scroll', requestTick, { passive: true });
+
+      // Initial call
+      updateNavbar();
+    }
+
+    function getSessionData() {
+      const session = localStorage.getItem('nexus_session') || sessionStorage.getItem('nexus_session');
+      try {
+        return session ? JSON.parse(session) : null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function isAuthenticated() {
+      const sessionData = getSessionData();
+      return sessionData && sessionData.token && sessionData.user;
+    }
+
+    function getAuthToken() {
+      const sessionData = getSessionData();
+      return sessionData ? sessionData.token : null;
+    }
+
+    function requireAuthentication() {
+      if (!isAuthenticated()) {
+        const returnUrl = encodeURIComponent(window.location.href);
+        window.location.href = `auth.html?returnUrl=${returnUrl}`;
+        return false;
+      }
+      return true;
+    }
+
+    function logout() {
+      localStorage.removeItem('nexus_session');
+      sessionStorage.removeItem('nexus_session');
+      window.location.reload();
+    }
+
+    function checkUserAuthentication() {
+      const sessionData = getSessionData();
+      const guestMenu = document.getElementById('guest-menu');
+      const userMenu = document.getElementById('user-menu');
+      const user = sessionData?.user;
+
+      if (user) {
+        const username = user.username || user.email.split('@')[0];
+        const userInitials = username.substring(0, 2).toUpperCase();
+
+        // Update navbar elements
+        const navbarUsername = document.getElementById('navbar-username');
+        const userAvatar = document.getElementById('user-avatar');
+
+        if (navbarUsername) {
+          navbarUsername.textContent = username;
+        }
+        if (userAvatar) {
+          userAvatar.textContent = userInitials;
+        }
+
+        // Show user menu, hide guest menu
+        if (guestMenu) guestMenu.style.display = 'none';
+        if (userMenu) userMenu.style.display = 'flex';
+        isLoggedIn = true;
+      } else {
+        // Show guest menu, hide user menu
+        if (guestMenu) guestMenu.style.display = 'block';
+        if (userMenu) userMenu.style.display = 'none';
+        isLoggedIn = false;
+      }
+    }
+
+    // --- TOURNAMENT DETAILS LOGIC ---
+    const isLocal = window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1' ||
+      window.location.protocol === 'file:';
+    const API_BASE_URL = isLocal ? 'http://localhost:8000' : 'https://t2-237c.onrender.com';
+    let currentTournament = null;
+
+    function setLoading(isLoading) {
+      const loader = document.getElementById('loader-wrapper');
+      if (isLoading) {
+        loader.classList.remove('hidden');
+      } else {
+        loader.classList.add('hidden');
+      }
+    }
+
+    /**
+     * Public endpoint: Fetches tournament details without authentication.
+     */
+    async function getTournamentData(tournamentSlug) {
+      const response = await fetch(`${API_BASE_URL}/api/tournaments/slug/${tournamentSlug}`);
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('Tournament Not Found on API');
+        }
+        throw new Error(`API Error: ${response.status}`);
+      }
+      const result = await response.json();
+      if (result.success) return result.data;
+      throw new Error(result.error || 'Failed to fetch tournament');
+    }
+
+    // --- REMOVED: calculateStatus and setProgressionHeight functions ---
+
+    /**
+     * NEW: Renders the schedule as a simple table.
+     */
+    function renderScheduleTable(timelineData) {
+      const tableBody = document.querySelector('#event-list tbody');
+      if (!tableBody) return;
+
+      tableBody.innerHTML = ''; // Clear existing content
+
+      if (timelineData.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color: var(--text-secondary); padding: 2rem;">No detailed match schedule has been posted yet.</td></tr>`;
+        return;
+      }
+
+      timelineData.forEach((event, index) => {
+        // Use the 24-hour time data
+        const date = event.dateOnly || event.displayTime.split(',')[0].trim();
+        const time24hr = event.time24hr || '';
+
+        // Apply simple status coloring for visibility
+        let rowClass = '';
+        const eventTime = new Date(event.isoDatetime);
+        const CURRENT_TIME = new Date();
+
+        if (CURRENT_TIME > eventTime) {
+          // Dim completed events
+          rowClass = 'completed-row';
+        } else if (eventTime > CURRENT_TIME && (index === 0 || new Date(timelineData[index - 1].isoDatetime) < CURRENT_TIME)) {
+          // Highlight the first upcoming event as 'current'
+          rowClass = 'current-row';
+        }
+
+        // Show clean 24-hour time format to avoid timezone conversion issues
+        const timeDisplay = time24hr ? `<span style="font-weight: 600; color: var(--primary-color);">${time24hr}</span>` : 'TBD';
+
+        const rowHtml = `
+                <tr class="${rowClass}">
+                    <td>${event.title}${event.description ? `<br><small style="color: var(--text-secondary);">${event.description}</small>` : ''}</td>
+                    <td>${date}</td>
+                    <td>${timeDisplay}</td>
+                </tr>
+            `;
+        tableBody.insertAdjacentHTML('beforeend', rowHtml);
+      });
+    }
+
+
+    /**
+     * MODIFIED: updateSchedule now calls renderScheduleTable.
+     */
+    function updateSchedule(tournament) {
+      // Renamed container to tableBody, but for consistency with previous functions,
+      // we keep logic targeting the data structure.
+      let allEvents = [];
+
+      const parseDate = (dateStr) => {
+        // Parse manually to avoid timezone conversion
+        const cleanStr = dateStr.replace('Z', '').replace('T', ' ');
+        const [datePart, timePart] = cleanStr.split(' ');
+        const [year, month, day] = datePart.split('-');
+        const [hours, minutes, seconds] = timePart ? timePart.split(':') : ['00', '00', '00'];
+
+        // Create date object with local timezone (no conversion)
+        const date = new Date(year, month - 1, day, hours, minutes, seconds || 0);
+        return isNaN(date) ? null : date;
+      };
+
+      const formatEventData = (dateObj, title, description = '') => {
+        if (!dateObj) return null;
+
+        // Extract the time components directly without timezone conversion
+        // This ensures 15:00 input shows as 15:00 output
+        const year = dateObj.getFullYear();
+        const month = dateObj.getMonth();
+        const date = dateObj.getDate();
+        const hours = dateObj.getHours();
+        const minutes = dateObj.getMinutes();
+
+        // Create display strings using the raw values
+        const day = new Date(year, month, date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const time24hr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+        return {
+          date: dateObj,
+          isoDatetime: dateObj.toISOString(),
+          title: title,
+          description: description,
+          displayTime: `${day}, ${time24hr}`,
+          time24hr: time24hr,
+          dateOnly: day
+        };
+      };
+
+      const addEvent = (dateStr, title, description = '') => {
+        const date = parseDate(dateStr);
+        const eventData = formatEventData(date, title, description);
+        if (eventData) allEvents.push(eventData);
+      };
+
+      addEvent(tournament.registrationStart, 'Registration Opens');
+      addEvent(tournament.registrationEnd, 'Registration Closes');
+      addEvent(tournament.tournamentStart, 'Tournament Begins');
+      addEvent(tournament.tournamentEnd, 'Tournament Ends');
+
+      if (tournament.scheduleEvents) {
+        tournament.scheduleEvents.forEach(event => {
+          const dateTimeStr = `${event.date}T${event.time}Z`;
+          addEvent(dateTimeStr, event.title, event.description);
+        });
+      }
+
+      if (tournament.format === 'kp' && tournament.kpSettings && tournament.kpSettings.matchSchedule) {
+        tournament.kpSettings.matchSchedule.forEach(match => {
+          addEvent(match.date, match.match, `${match.teams} teams competing`);
+        });
+      }
+
+      allEvents.sort((a, b) => a.date - b.date);
+
+      const uniqueEvents = allEvents.filter((event, index, self) =>
+        index === 0 || self[index - 1].date.getTime() !== event.date.getTime()
+      );
+
+      // Call the new table renderer
+      renderScheduleTable(uniqueEvents);
+    }
+
+    function renderFinalists(finalists) {
+      const finalistsContent = document.getElementById('finalists-content');
+
+      if (!finalists || finalists.length === 0) {
+        finalistsContent.innerHTML = `
+              <div class="empty-finalists">
+                  <i class="fas fa-trophy" style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+                  <p>Final standings will appear here once the tournament concludes.</p>
+              </div>
+          `;
+        return;
+      }
+
+      // Show all finalists that admin has added
+      const displayFinalists = finalists;
+
+      // Split finalists into two columns of 8 each
+      const leftColumn = displayFinalists.slice(0, 8);
+      const rightColumn = displayFinalists.slice(8, 16);
+      const maxRows = Math.max(leftColumn.length, rightColumn.length);
+
+      finalistsContent.innerHTML = `
+          <table class="finalists-table">
+              <thead>
+                  <tr>
+                      <th>S.No.</th>
+                      <th>Team Name</th>
+                      <th>S.No.</th>
+                      <th>Team Name</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  ${Array.from({ length: maxRows }, (_, index) => {
+        const leftTeam = leftColumn[index];
+        const rightTeam = rightColumn[index];
+
+        const leftRank = leftTeam ? index + 1 : '';
+        const leftName = leftTeam ? (leftTeam.teamName || leftTeam.name || `Team ${index + 1}`) : '';
+
+        const rightRank = rightTeam ? index + 9 : '';
+        const rightName = rightTeam ? (rightTeam.teamName || rightTeam.name || `Team ${index + 9}`) : '';
+
+        return `
+                          <tr>
+                              <td>${leftRank}</td>
+                              <td>${leftName}</td>
+                              <td>${rightRank}</td>
+                              <td>${rightName}</td>
+                          </tr>
+                      `;
+      }).join('')}
+              </tbody>
+          </table>
+      `;
+    }
+
+    function updateUI(tournament) {
+      if (!tournament) return;
+
+      const heroSection = document.querySelector('.tournament-hero');
+      if (tournament.posterImage) {
+        let imageUrl = tournament.posterImage.startsWith('http') ? tournament.posterImage : new URL(tournament.posterImage, API_BASE_URL).href;
+        heroSection.style.backgroundImage = `url('${imageUrl}')`;
+      }
+
+      document.getElementById('page-title').textContent = `${tournament.title} | Uni Games`;
+      document.getElementById('tournament-title').textContent = tournament.title;
+      // REMOVED: tournament-subtitle content update
+
+      document.getElementById('tournament-overview').innerHTML = `<p>${tournament.description || "No description available."}</p>`;
+
+      const formatContainer = document.getElementById('tournament-format-details');
+      let formatHTML = '';
+
+      if (tournament.format === 'kp' && tournament.kpSettings) {
+        const s = tournament.kpSettings;
+        const maxTeams = tournament.maxTeams || (s.numberOfGroups * s.groupSize);
+        const totalQualifiers = s.numberOfGroups || 4;
+        const totalMatches = totalQualifiers + 1; // Qualifiers + Final
+
+        formatHTML = `
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div>
+              <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.75rem;">
+                <li style="padding-left: 1.5rem; position: relative;">
+                  <span style="position: absolute; left: 0; color: var(--primary-color);">•</span>
+                  <strong>Tournament Format:</strong> KP
+                </li>
+                <li style="padding-left: 1.5rem; position: relative;">
+                  <span style="position: absolute; left: 0; color: var(--primary-color);">•</span>
+                  <strong>Advancement:</strong> Top 4 teams from each qualifier advance to finals
+                </li>
+                <li style="padding-left: 1.5rem; position: relative;">
+                  <span style="position: absolute; left: 0; color: var(--primary-color);">•</span>
+                  <strong>Finals:</strong> ${totalQualifiers * 4} qualified teams compete for the championship
+                </li>
+                <li style="padding-left: 1.5rem; position: relative;">
+                  <span style="position: absolute; left: 0; color: var(--primary-color);">•</span>
+                  <strong>Finalists:</strong> Final standings will appear in the Finalists section after completion
+                </li>
+              </ul>
+            </div>
+          </div>
+        `;
+      } else if (tournament.format === 'single_elimination') {
+        const maxTeams = tournament.maxTeams || 'Unlimited';
+        const totalRounds = maxTeams !== 'Unlimited' ? Math.ceil(Math.log2(maxTeams)) : 'Variable';
+        const totalMatches = maxTeams !== 'Unlimited' ? maxTeams - 1 : 'Variable';
+
+        formatHTML = `
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div>
+              <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.75rem;">
+                <li style="padding-left: 1.5rem; position: relative;">
+                  <span style="position: absolute; left: 0; color: var(--primary-color);">•</span>
+                  <strong>Tournament Format:</strong> Single Elimination
+                </li>
+                <li style="padding-left: 1.5rem; position: relative;">
+                  <span style="position: absolute; left: 0; color: var(--primary-color);">•</span>
+                  <strong>Elimination:</strong> Lose one match and you're out of the tournament
+                </li>
+                <li style="padding-left: 1.5rem; position: relative;">
+                  <span style="position: absolute; left: 0; color: var(--primary-color);">•</span>
+                  <strong>Advancement:</strong> Win your match to advance to the next round
+                </li>
+                <li style="padding-left: 1.5rem; position: relative;">
+                  <span style="position: absolute; left: 0; color: var(--primary-color);">•</span>
+                  <strong>Finals:</strong> Last two teams compete for the championship
+                </li>
+                <li style="padding-left: 1.5rem; position: relative;">
+                  <span style="position: absolute; left: 0; color: var(--primary-color);">•</span>
+                  <strong>Finalists:</strong> Final standings will appear in the Finalists section after completion
+                </li>
+              </ul>
+            </div>
+          </div>
+        `;
+      } else if (tournament.format === 'double_elimination') {
+        const maxTeams = tournament.maxTeams || 'Unlimited';
+        const totalMatches = maxTeams !== 'Unlimited' ? (maxTeams * 2) - 2 : 'Variable';
+
+        formatHTML = `
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div>
+              <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.75rem;">
+                <li style="padding-left: 1.5rem; position: relative;">
+                  <span style="position: absolute; left: 0; color: var(--primary-color);">•</span>
+                  <strong>Tournament Format:</strong> Double Elimination
+                </li>
+                <li style="padding-left: 1.5rem; position: relative;">
+                  <span style="position: absolute; left: 0; color: var(--primary-color);">•</span>
+                  <strong>Winners Bracket:</strong> Teams that haven't lost a match
+                </li>
+                <li style="padding-left: 1.5rem; position: relative;">
+                  <span style="position: absolute; left: 0; color: var(--primary-color);">•</span>
+                  <strong>Losers Bracket:</strong> Teams that lost once get a second chance
+                </li>
+                <li style="padding-left: 1.5rem; position: relative;">
+                  <span style="position: absolute; left: 0; color: var(--primary-color);">•</span>
+                  <strong>Grand Finals:</strong> Winners bracket champion vs Losers bracket champion
+                </li>
+                <li style="padding-left: 1.5rem; position: relative;">
+                  <span style="position: absolute; left: 0; color: var(--primary-color);">•</span>
+                  <strong>Finalists:</strong> Final standings will appear in the Finalists section after completion
+                </li>
+              </ul>
+            </div>
+          </div>
+        `;
+      } else {
+        // Generic format for other tournament types
+        const formatName = tournament.format ? tournament.format.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Standard';
+        const maxTeams = tournament.maxTeams || 'Unlimited';
+
+        formatHTML = `
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div>
+              <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.75rem;">
+                <li style="padding-left: 1.5rem; position: relative;">
+                  <span style="position: absolute; left: 0; color: var(--primary-color);">•</span>
+                  <strong>Tournament Format:</strong> ${formatName}
+                </li>
+                <li style="padding-left: 1.5rem; position: relative;">
+                  <span style="position: absolute; left: 0; color: var(--primary-color);">•</span>
+                  <strong>Details:</strong> Tournament format details will be updated as more information becomes available
+                </li>
+              </ul>
+            </div>
+          </div>
+        `;
+      }
+      formatContainer.innerHTML = formatHTML;
+
+      document.getElementById('game-name').textContent = tournament.game || 'TBD';
+      document.getElementById('tournament-format').textContent = tournament.format ? tournament.format.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'TBD';
+      document.getElementById('entry-fee').textContent = tournament.entryFee ? `₹${tournament.entryFee.toLocaleString('en-IN')}` : 'Free';
+      document.getElementById('max-teams').textContent = tournament.maxTeams || 'Unlimited';
+
+      const formatDateWithTime = (dateString) => {
+        // Parse the date string manually to avoid timezone conversion
+        const dateStr = dateString.replace('Z', '').replace('T', ' ');
+        const [datePart, timePart] = dateStr.split(' ');
+        const [year, month, day] = datePart.split('-');
+        const [hours, minutes] = timePart ? timePart.split(':') : ['00', '00'];
+
+        // Manually format the date
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const displayDate = `${parseInt(day)} ${monthNames[parseInt(month) - 1]}, ${year}`;
+
+        // Convert 24-hour time to 12-hour AM/PM format
+        const hour = parseInt(hours);
+        const minute = parseInt(minutes);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        const formattedHour = hour % 12 || 12; // Convert 0 to 12 for 12 AM
+        const formattedMinutes = minute < 10 ? '0' + minute : minute;
+        const displayTime = `${formattedHour}:${formattedMinutes} ${ampm}`;
+
+        return `${displayDate} at ${displayTime}`;
+      };
+
+
+
+      const prizeList = document.getElementById('prize-list');
+      prizeList.innerHTML = '';
+      if (tournament.prizeDistribution && Object.keys(tournament.prizeDistribution).length > 0) {
+        Object.entries(tournament.prizeDistribution).forEach(([place, amount]) => {
+          prizeList.innerHTML += `<li><span class="info-label">${place.charAt(0).toUpperCase() + place.slice(1)} Place</span><span class="info-value">₹${amount.toLocaleString('en-IN')}</span></li>`;
+        });
+      } else {
+        prizeList.innerHTML = `<li><span class="info-label">Total Pool</span><span class="info-value">₹${(tournament.prizePool || 0).toLocaleString('en-IN')}</span></li>`;
+      }
+
+      updateStatusAndLeaderboard(tournament);
+      updateSchedule(tournament);
+    }
+
+    function updateStatusAndLeaderboard(tournament) {
+      const status = tournament.status;
+      const primaryActionBtn = document.getElementById('primary-action');
+      const bracketsActionBtn = document.getElementById('brackets-action');
+      const finalistsSection = document.getElementById('finalists-section');
+
+      // Always show finalists section and render appropriate content
+      finalistsSection.style.display = 'block';
+      renderFinalists(tournament.finalists || []);
+
+      primaryActionBtn.style.display = 'inline-flex';
+      primaryActionBtn.disabled = false;
+      bracketsActionBtn.style.display = 'none';
+
+      // AUTHENTICATION GUARD: This check determines if the user is registered. 
+      // It requires a token, but if no token exists (user is public), it safely returns false.
+      checkUserRegistrationStatus(tournament.slug).then(isRegistered => {
+        if (isRegistered) {
+          primaryActionBtn.innerHTML = '<i class="fas fa-check-circle"></i> Registered';
+          primaryActionBtn.className = 'btn-primary btn-success';
+          primaryActionBtn.disabled = true;
+
+          // Show brackets button for registered users regardless of tournament status
+          bracketsActionBtn.style.display = 'inline-flex';
+          bracketsActionBtn.onclick = () => {
+            window.location.href = `tournament-brackets-view.html?slug=${tournament.slug}`;
+          };
+          return;
+        }
+
+        switch (status) {
+          case 'upcoming':
+            primaryActionBtn.innerHTML = '<i class="fas fa-clock"></i> Registration Opens Soon';
+            primaryActionBtn.disabled = true;
+            break;
+          case 'registration_open':
+            primaryActionBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register Now';
+            // Registration action requires authentication, so the click handler checks for a session.
+            primaryActionBtn.onclick = () => {
+              const sessionData = getSessionData();
+              const user = sessionData?.data?.user || sessionData?.user;
+              if (user) {
+                // User is logged in, proceed to registration form
+                window.location.href = `team-registration.html?slug=${currentTournament.slug}`;
+              } else {
+                // User is not logged in, redirect to auth page
+                redirectToAuth('register');
+              }
+            };
+            break;
+          case 'registration_closed':
+            primaryActionBtn.innerHTML = '<i class="fas fa-lock"></i> Registration Closed';
+            primaryActionBtn.disabled = true;
+
+            // Show brackets button when registration is closed (for non-registered users)
+            bracketsActionBtn.style.display = 'inline-flex';
+            bracketsActionBtn.onclick = () => {
+              window.location.href = `tournament-brackets-view.html?slug=${tournament.slug}`;
+            };
+            break;
+          case 'ongoing':
+          case 'ended':
+            primaryActionBtn.style.display = 'none';
+
+            // Show brackets button for ongoing and ended tournaments (for non-registered users)
+            bracketsActionBtn.style.display = 'inline-flex';
+            bracketsActionBtn.onclick = () => {
+              window.location.href = `tournament-brackets-view.html?slug=${tournament.slug}`;
+            };
+            break;
+          default:
+            primaryActionBtn.style.display = 'none';
+            break;
+        }
+      });
+    }
+
+    /**
+     * Authenticated endpoint check: Safely checks if the currently logged-in user is registered.
+     * PUBLIC ACCESS PROTECTION: Skips the API call if no session data is present.
+     */
+    async function checkUserRegistrationStatus(slug) {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('registration') === 'success') return true;
+
+      const sessionData = getSessionData();
+
+      // If no token exists (user is browsing publicly), we cannot check status.
+      // We safely assume they are *not* registered and skip the authenticated API call.
+      if (!sessionData || !sessionData.token) {
+        console.log('User not authenticated. Skipping registration status API check.');
+        return false;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/tournaments/${slug}/registration-status`, {
+          headers: { 'Authorization': `Bearer ${sessionData.token}` }
+        });
+        if (!response.ok) {
+          // The backend failed the authentication check (401/403) or slug check (404)
+          console.error(`API check failed with status: ${response.status}. Assuming user is not registered.`);
+          return false;
+        }
+        const result = await response.json();
+        return result.success && result.data.isRegistered;
+      } catch (error) {
+        console.error('Error checking registration status (Network/CORS failure):', error);
+        return false;
+      }
+    }
+
+
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Initialize modern navbar functionality
+      initSmartNavbar();
+      checkUserAuthentication();
+
+      setLoading(true);
+      const urlParams = new URLSearchParams(window.location.search);
+      const slug = urlParams.get('slug');
+
+      if (!slug) {
+        document.getElementById('tournament-title').textContent = "Tournament Not Found";
+        // REMOVED: tournament-subtitle content update here too
+        setLoading(false);
+        return;
+      }
+
+      // Define mock data structure for robust failure fallback
+      const mockTournamentData = {
+        slug: 'test-cup-2025',
+        title: 'The Cyber-Clash Invitational',
+        description: 'A global showdown of epic proportions with a massive prize pool.',
+        posterImage: 'https://placehold.co/1200x500/0D0A1A/0AFAD9?text=Cyber-Clash+2025+Banner',
+        game: 'Cyber-Arena',
+        format: 'single_elimination',
+        entryFee: 500,
+        maxTeams: 64,
+        prizeDistribution: { 'first': 100000, 'second': 50000 },
+        status: 'registration_open',
+        registrationStart: '2025-09-01T00:00:00Z',
+        registrationEnd: '2025-09-28T23:59:00Z',
+        tournamentStart: '2025-10-05T14:00:00Z',
+        tournamentEnd: '2025-10-08T20:00:00Z',
+        scheduleEvents: [
+          { date: '2025-10-01', time: '18:00:00', title: 'Bracket Reveal', description: 'The official tournament bracket is published.' },
+          { date: '2025-10-05', time: '13:00:00', title: 'Mandatory Player Check-in', description: 'All team captains must check in 1 hour before start.' }
+        ],
+        finalists: []
+      };
+
+      let tournamentData = null;
+      try {
+        tournamentData = await getTournamentData(slug);
+      } catch (e) {
+        console.warn(`Live API fetch for slug "${slug}" failed. Falling back to mock data.`, e);
+        tournamentData = mockTournamentData;
+        document.getElementById('tournament-title').textContent += " (MOCKED)";
+      }
+
+      currentTournament = tournamentData;
+
+      if (currentTournament) {
+        updateUI(currentTournament);
+      }
+      setLoading(false);
+
+      const faqItems = document.querySelectorAll('.faq-item');
+      faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        question.addEventListener('click', () => {
+          const currentlyActive = document.querySelector('.faq-item.active');
+          if (currentlyActive && currentlyActive !== item) {
+            currentlyActive.classList.remove('active');
+          }
+          item.classList.toggle('active');
+        });
+      });
+
+      // Removed: window.addEventListener('resize', setProgressionHeight); as progression is gone.
+    });
+
+  </script>
+
+</body>
+
+</html>

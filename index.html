@@ -1,0 +1,2185 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description"
+    content="Uni Games — host and compete. Clean, accessible esports landing page with responsive layout and video hero." />
+  <meta name="theme-color" content="#0D0A1A" />
+  <title>Uni Games — Compete | Host | Win</title>
+  <link rel="icon" type="image/png" href="ug.png">
+  <!-- Fonts & icons (preload & preconnect for performance) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity=""
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.1/dist/dotlottie-wc.js" type="module"></script>
+
+
+  <style>
+    /* =========================
+       NAVBAR STYLES (Modern Design)
+       ========================= */
+    .nav-normal {
+      background: rgba(13, 10, 26, 0.1);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 0.5rem 2rem;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+      transform: translateY(0);
+    }
+
+    .nav-normal.nav-hidden {
+      transform: translateY(-100%);
+    }
+
+    .nav-normal.nav-scrolled {
+      background: rgba(13, 10, 26, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      text-decoration: none;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      height: 80px;
+      width: auto;
+      margin: 0;
+      padding: 0;
+      display: block;
+    }
+
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0;
+      list-style: none;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-links li {
+      position: relative;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      padding: 0.6rem 1.2rem;
+      display: block;
+    }
+
+    .nav-links a:hover {
+      color: white;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 0.65rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .btn-request {
+      background: white;
+      color: #0a0a0a;
+    }
+
+    .btn-request:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-logout {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-logout:hover {
+      background: rgba(239, 68, 68, 0.25);
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-secondary) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .user-name {
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    #user-menu {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+
+    .menu-icon {
+      width: 24px;
+      height: 20px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .menu-icon span {
+      width: 100%;
+      height: 2px;
+      background: white;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .menu-toggle.active .menu-icon span:nth-child(1) {
+      transform: rotate(45deg) translate(7px, 7px);
+    }
+
+    .menu-toggle.active .menu-icon span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .menu-toggle.active .menu-icon span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -7px);
+    }
+
+    /* Mobile Styles */
+    @media (max-width: 968px) {
+      .menu-toggle {
+        display: block;
+      }
+
+      .nav-center {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        height: 100vh;
+        width: 85%;
+        max-width: 350px;
+        flex-direction: column;
+        background: rgba(15, 15, 15, 0.98);
+        backdrop-filter: blur(20px);
+        padding: 6rem 2rem 2rem;
+        gap: 0;
+        transition: right 0.3s ease;
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+        align-items: flex-start;
+        overflow-y: auto;
+      }
+
+      .nav-center.active {
+        right: 0;
+      }
+
+      .nav-links {
+        flex-direction: column;
+        width: 100%;
+        gap: 0;
+      }
+
+      .nav-links li {
+        width: 100%;
+      }
+
+      .nav-links a {
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .auth-buttons {
+        flex-direction: column;
+        width: 100%;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      .user-info {
+        width: 100%;
+        justify-content: center;
+      }
+
+      #user-menu {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 1rem;
+      }
+    }
+
+    /* =========================
+       Theme variables (Cyberpunk)
+       ========================= */
+    :root {
+      --primary-color: #0AFAD9;
+      /* Electric Cyan */
+      --bg-dark: #0D0A1A;
+      /* Dark Matter Black */
+      --accent-secondary: #5D3FD3;
+      /* Deep Indigo */
+      --panel: #161329;
+      /* Dark Indigo Panel */
+      --text-primary: #F0F0F0;
+      /* Starlight White */
+      --text-secondary: rgba(240, 240, 240, 0.7);
+      --border-color: rgba(10, 250, 217, 0.2);
+      --ease: 0.3s ease;
+
+      /* Legacy variables for compatibility */
+      --copy: var(--text-primary);
+      --muted: var(--text-secondary);
+      --accent: var(--accent-secondary);
+      /* Using Indigo as main accent */
+      --accent-2: var(--primary-color);
+      /* Using Cyan as secondary accent */
+      --radius: 12px;
+      --container: 1400px;
+    }
+
+    /* Enhanced easing curves for smoother animations */
+    :root {
+      --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+      --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+      --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --spring: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    /* Respect reduced motion preferences */
+    @media (prefers-reduced-motion: reduce) {
+      :root {
+        --ease: 0ms;
+      }
+
+      * {
+        transition-duration: 0ms !important;
+        animation-duration: 0ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+
+    /* =========================
+       Base resets & accessibility
+       ========================= */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.6;
+      -webkit-text-size-adjust: 100%;
+      overflow-x: hidden;
+      /* Prevent horizontal scrollbars */
+      font-size: 16px;
+      /* Base font size */
+    }
+
+    @media (min-width: 1600px) {
+      body {
+        font-size: 17px;
+      }
+    }
+
+    @media (min-width: 1920px) {
+      body {
+        font-size: 18px;
+        /* Increase base font size on large screens */
+      }
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img,
+    video,
+    iframe {
+      max-width: 100%;
+      display: block;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    /* Skip link for keyboard users */
+    .skip-link {
+      position: absolute;
+      left: -999px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+
+    .skip-link:focus {
+      left: 1rem;
+      top: 1rem;
+      width: auto;
+      height: auto;
+      padding: .5rem .75rem;
+      background: rgba(0, 0, 0, .8);
+      border-radius: 6px;
+      color: var(--copy);
+      z-index: 9999;
+    }
+
+    /* =========================
+       Layout helpers
+       ========================= */
+    .container {
+      width: min(94%, var(--container));
+      margin: 0 auto;
+    }
+
+
+    /* =========================
+       Hero section
+       ========================= */
+    .hero {
+      min-height: 90vh;
+      /* Reduced height to move content up */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      padding: 6.4rem 2rem 4rem 2rem;
+      /* Adjusted top padding */
+      overflow: hidden;
+    }
+
+    .hero-video-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .hero-video-bg video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(13, 10, 26, 0.6);
+      /* Reduced overlay opacity from 0.7 to 0.6 */
+      z-index: 2;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 150px;
+      background: linear-gradient(to top, var(--bg-dark) 20%, transparent);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .hero-content-wrapper {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3rem;
+    }
+
+    .hero__content {
+      position: relative;
+      z-index: 2;
+      transition: all 0.6s var(--ease-out-quart);
+      width: auto;
+      padding: 0;
+    }
+
+    .hero__content .tournament-name {
+      font-size: clamp(2.8rem, 7vw, 6.5rem);
+      margin-bottom: 1rem;
+      font-weight: 800;
+      letter-spacing: -2px;
+    }
+
+    .hero__content .prize-pool {
+      font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+      margin-bottom: 2.5rem;
+      opacity: 0.9;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Primary Button */
+    .btn-primary {
+      padding: 1.1rem 2.8rem;
+      border-radius: 6px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      background: var(--primary-color);
+      color: var(--bg-dark);
+      /* Changed text color for contrast */
+    }
+
+    .btn-primary:hover {
+      opacity: 0.8;
+      filter: brightness(0.9);
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background: rgba(13, 10, 26, 0.5);
+      /* Semi-transparent background */
+      backdrop-filter: blur(5px);
+      border-radius: 50px;
+      padding: 0.75rem 1.5rem;
+      text-align: center;
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      opacity: 0.8;
+      filter: brightness(0.9);
+    }
+
+    .stat-card .label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .stat-card .value {
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+
+    /* =========================
+       Features Section
+       ========================= */
+    .features-section {
+      padding: 8rem 2rem;
+    }
+
+    .features-grid {
+      display: flex;
+      justify-content: center;
+      gap: 4rem;
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .feature-item {
+      text-align: center;
+      max-width: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .feature-item img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 1rem;
+      border: 2px solid var(--border-color);
+      transition: all 0.3s ease;
+      filter: drop-shadow(0 0 15px rgba(10, 250, 217, 0.25));
+    }
+
+    .feature-item:hover img {
+      opacity: 0.8;
+      filter: brightness(0.9);
+    }
+
+    .feature-item h3 {
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .feature-item p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* =========================
+       Games Section
+       ========================= */
+    .games-section {
+      padding: 5rem 2rem;
+      text-align: center;
+    }
+
+    .games-header {
+      margin-bottom: 4rem;
+    }
+
+    .games-title {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      margin-bottom: 1rem;
+      font-weight: 800;
+    }
+
+    .games-subtitle {
+      font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .games-carousel-wrapper {
+      position: relative;
+      max-width: 1600px;
+      /* Increased width for larger cards */
+      margin: 0 auto;
+    }
+
+    .games-carousel {
+      overflow: hidden;
+    }
+
+    .games-track {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .game-card {
+      flex: 0 0 50%;
+      max-width: 50%;
+      padding: 0 0.75rem;
+    }
+
+    .game-card img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+      max-height: 450px;
+      min-height: 350px;
+    }
+
+    .game-card:hover img {
+      opacity: 0.8;
+      filter: brightness(0.9);
+    }
+
+    .carousel-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(240, 240, 240, 0.1);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.3s ease;
+    }
+
+    .carousel-nav-btn:hover {
+      opacity: 0.8;
+      filter: brightness(0.9);
+    }
+
+    .prev-btn {
+      left: -20px;
+    }
+
+    .next-btn {
+      right: -20px;
+    }
+
+    .carousel-progress-bar {
+      width: 200px;
+      height: 4px;
+      background: rgba(240, 240, 240, 0.1);
+      margin: 2rem auto 0;
+      border-radius: 2px;
+    }
+
+    #carousel-progress {
+      width: 0;
+      height: 100%;
+      background: var(--primary-color);
+      border-radius: 2px;
+      transition: width 0.5s ease-in-out;
+    }
+
+
+    /* =========================
+       News & Tournaments Section
+       ========================= */
+    .news-section,
+    #tournaments {
+      padding: 5rem 2rem;
+      text-align: center;
+    }
+
+    .news-title,
+    #tournaments-heading {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      margin-bottom: 2rem;
+      font-weight: 800;
+    }
+
+    /* Tournament Action Buttons */
+    .tournament-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 4rem;
+      flex-wrap: wrap;
+    }
+
+    .tournament-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color), var(--accent-secondary));
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.8;
+      filter: brightness(0.9);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-primary);
+      border-color: var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      opacity: 0.8;
+      filter: brightness(0.9);
+    }
+
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: left;
+      justify-content: center;
+    }
+    @media (max-width: 768px) {
+      .footer-grid {
+        grid-template-columns: 1fr;
+        text-align: left;
+        gap: 2rem;
+      }
+
+      /* Hide the Tournaments, Community, and Company columns on mobile */
+      .footer-column:not(.footer-brand) {
+        display: none;
+      }
+
+      .social-links {
+        justify-content: flex-start;
+      }
+      
+      .footer-brand .brand {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .game-card {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        padding: 0 1rem;
+      }
+
+      .game-card img {
+        max-height: 500px;
+        min-height: 400px;
+      }
+
+      .games-carousel-wrapper {
+        padding: 0 3rem;
+      }
+
+      .carousel-nav-btn {
+        width: 35px;
+        height: 35px;
+      }
+
+      .prev-btn {
+        left: 0;
+      }
+
+      .next-btn {
+        right: 0;
+      }
+    }
+
+    /* Tournaments Grid - Updated to match tournaments.html design */
+    .tournaments-grid {
+      display: grid;
+      gap: 2rem;
+      margin: 2rem auto 0;
+      justify-content: center;
+      max-width: 1200px;
+      padding: 0 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 400px));
+    }
+
+    /* Single card: centered with constrained width */
+    .tournaments-grid.single-card {
+      grid-template-columns: minmax(350px, 400px);
+      max-width: 400px;
+    }
+
+    /* Two cards: side by side */
+    .tournaments-grid.two-cards {
+      grid-template-columns: repeat(2, minmax(350px, 400px));
+      max-width: 850px;
+    }
+
+    /* Three cards: responsive grid with max 3 cards */
+    .tournaments-grid.three-cards {
+      grid-template-columns: repeat(auto-fit, minmax(350px, 400px));
+      max-width: 1200px;
+    }
+
+    /* Ensure cards don't get too wide */
+    .tournament-card {
+      max-width: 400px;
+      width: 100%;
+    }
+
+
+    .tournament-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      max-width: 500px;
+      width: 100%;
+      text-decoration: none;
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .tournament-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      border-color: rgba(255, 215, 0, 0.2);
+    }
+
+    .news-card {
+      background: var(--panel);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      border: 1px solid var(--border-color);
+      text-decoration: none;
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .news-card:hover {
+      opacity: 0.8;
+      filter: brightness(0.9);
+    }
+
+    .news-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .news-content {
+      padding: 1.5rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .news-meta {
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .news-meta .league-name {
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    .news-card h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      line-height: 1.4;
+    }
+
+    .news-card p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .tournament-image {
+      height: 200px;
+      min-height: 200px;
+      max-height: 200px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .tournament-content {
+      padding: 1.5rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .tournament-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent-secondary);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* =========================
+       FAQ Section
+       ========================= */
+    .faq-section {
+      padding: 5rem 2rem;
+      text-align: center;
+    }
+
+    .faq-title {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      margin-bottom: 4rem;
+      font-weight: 800;
+    }
+
+    .faq-grid {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .faq-item {
+      background: var(--panel);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border-color);
+      transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .faq-item:hover {
+      opacity: 0.8;
+      filter: brightness(0.9);
+    }
+
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      color: var(--text-primary);
+      font-size: 1.1rem;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .faq-question:hover {
+      color: var(--primary-color);
+    }
+
+    .faq-question i {
+      transition: transform 0.3s ease;
+      color: var(--primary-color);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+    }
+
+    .faq-answer p {
+      color: var(--text-secondary);
+      padding: 0 1.5rem 1.5rem 1.5rem;
+      margin: 0;
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 200px;
+      /* Adjust as needed */
+    }
+
+    .faq-item.active .faq-question i {
+      transform: rotate(45deg);
+    }
+
+    /* =========================
+       Footer
+       ========================= */
+    footer.site-footer {
+      background: #070707;
+      padding: 5rem 2rem 2rem;
+      text-align: center;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .footer-grid {
+      max-width: 1200px;
+      margin: 0 auto 3rem auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2.5rem;
+      text-align: left;
+    }
+
+    .footer-column h4 {
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .footer-column ul a,
+    .footer-column p {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      display: block;
+      margin-bottom: 0.75rem;
+      font-size: 1rem;
+    }
+
+    .footer-column ul a:hover {
+      color: var(--primary-color);
+    }
+
+    .footer-brand .brand {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .footer-brand p {
+      margin-bottom: 1.5rem;
+      line-height: 1.7;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .social-links a {
+      color: var(--text-secondary);
+      font-size: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .social-links a:hover {
+      color: var(--primary-color);
+      transform: translateY(-3px);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border-color);
+      padding-top: 2rem;
+      opacity: 0.7;
+      font-size: 1rem;
+    }
+
+    /* =========================
+       Responsive
+       ========================= */
+    @media (min-width: 768px) {
+      .game-card {
+        flex-basis: 50%;
+        max-width: 50%;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .game-card {
+        flex-basis: 33.33%;
+        max-width: 33.33%;
+      }
+    }
+
+    @media (min-width: 1280px) {
+      .game-card {
+        flex-basis: 25%;
+        max-width: 25%;
+      }
+    }
+
+    @media (min-width: 1600px) {
+      .game-card {
+        flex-basis: 20%;
+        max-width: 20%;
+      }
+    }
+
+    @media (min-width: 1920px) {
+      .tournaments-grid {
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        max-width: 1400px;
+      }
+
+      .tournaments-grid.single-card {
+        max-width: 450px;
+      }
+    }
+
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .tournaments-grid {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      }
+
+      .tournaments-grid.single-card {
+        max-width: 450px;
+      }
+    }
+
+    .feature-item img {
+      width: 100px;
+      height: 100px;
+    }
+
+    .feature-item h3 {
+      font-size: 1.5rem;
+    }
+
+    .feature-item p {
+      font-size: 1.1rem;
+    }
+
+    /* in index.html, inside <style> */
+
+    .header-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    @media (max-width:920px) {
+
+      .header-container {
+        justify-content: space-between;
+      }
+
+      .features-grid {
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+
+      .hero h1,
+      .hero__content .tournament-name {
+        font-size: 2.5rem;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .tournaments-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tournaments-grid.single-card {
+        max-width: 100%;
+      }
+
+      .tournament-card {
+        max-width: 100%;
+      }
+    }
+
+    /* =========================
+       Animations & Loader
+       ========================= */
+    .fade-in-element {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+
+    .fade-in-element.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #loader-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-dark);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+
+    #loader-wrapper.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .site-header,
+    main,
+    .site-footer {
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+
+    body.loaded .site-header,
+    body.loaded main,
+    body.loaded .site-footer {
+      opacity: 1;
+    }
+
+    /* Add this entire new block of CSS for the status badges */
+    .tournament-status-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      z-index: 2;
+      backdrop-filter: blur(4px);
+    }
+
+    .status-registration-open {
+      background: rgba(34, 197, 94, 0.5);
+      /* Green */
+      color: #f0f0f0;
+    }
+
+    .status-ongoing {
+      background: rgba(59, 130, 246, 0.5);
+      /* Blue */
+      color: #f0f0f0;
+    }
+
+    .status-ended {
+      background: rgba(239, 68, 68, 0.5);
+      /* Red */
+      color: #f0f0f0;
+    }
+
+    .status-upcoming,
+    .status-registration-closed {
+      background: rgba(107, 114, 128, 0.5);
+      /* Gray */
+      color: #f0f0f0;
+    }
+
+    /* Custom Scrollbar Design */
+    .scrollbar {
+      margin-left: 30px;
+      float: left;
+      height: 300px;
+      width: 65px;
+      background: #F5F5F5;
+      overflow-y: scroll;
+      margin-bottom: 25px;
+    }
+
+    .force-overflow {
+      min-height: 450px;
+    }
+
+    /* Section Loader Styles */
+    .section-loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      min-height: 300px;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(10, 250, 217, 0.2);
+      border-top: 4px solid var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .section-loader p {
+      margin-top: 1rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    /* Custom Scrollbar Styles */
+    ::-webkit-scrollbar-track {
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-dark);
+    }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+      background-color: var(--bg-dark);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: var(--panel);
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: var(--accent-secondary);
+    }
+
+    /* Firefox scrollbar */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--panel) var(--bg-dark);
+    }
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .user-info:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(10, 250, 217, 0.3);
+        transform: translateY(-2px);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="loader-wrapper">
+    <dotlottie-wc src="https://lottie.host/f3668d34-e871-48f2-89e1-a802d02b8429/2gMMYTNzAd.lottie"
+      style="width: 300px;height: 300px" autoplay loop></dotlottie-wc>
+  </div>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <nav class="nav-normal">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <img src="ug.png" alt="Uni Games">
+      </a>
+      <div class="nav-center" id="normalNav">
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="tournaments.html">Tournaments</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="dispute-support.html">Support</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+        <div class="auth-buttons" id="normalAuth">
+          <div id="guest-menu">
+            <a href="auth.html" class="btn btn-request">Join Us</a>
+          </div>
+          <div id="user-menu" style="display: none;">
+            <div class="user-info" onclick="window.location.href='userdashboard.html'" style="cursor: pointer;">
+                <div class="user-avatar" id="user-avatar">U</div>
+                <span class="user-name" id="navbar-username">User</span>
+            </div>
+            <button class="btn btn-logout" onclick="handleLogout()">Logout</button>
+        </div>
+        </div>
+      </div>
+      <button class="menu-toggle" id="normalMenuToggle">
+        <div class="menu-icon">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </button>
+    </div>
+  </nav>
+
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-video-bg">
+        <video autoplay loop muted playsinline poster="">
+          <source src="/35506-405897842_small.webm" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="hero-content-wrapper">
+        <div class="hero__content" role="region" aria-label="Hero">
+          <h1 id="hero-title" class="tournament-name">Challenge your game!</h1>
+          <div id="prize-pool" class="prize-pool">
+            Level up your game, win real prizes, and join the ultimate competitive gaming community where champions are
+            made.
+          </div>
+
+          <div class="hero-buttons">
+            <a href="#tournaments" class="btn-primary" id="cta-learn-more">Start Playing Now</a>
+          </div>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat-card">
+            <div class="label">Players Online</div>
+            <div class="value">
+              <i class="fas fa-user"></i>
+              <span id="players-online">50,000 +</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Live Matches</div>
+            <div class="value">
+              <i class="fas fa-crosshairs"></i>
+              <span id="live-matches">100 +</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Rewards to Date</div>
+            <div class="value">
+              <i class="fas fa-trophy"></i>
+              <span id="rewards-to-date">₹1,00,000 +</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" class="section features-section fade-in-element">
+      <div class="features-grid">
+        <div class="feature-item" role="listitem">
+          <img src="/assets/gameIcon.png" alt="Play Icon">
+          <h3>Play</h3>
+          <p>Compete at your level in the best games. Join ranked matches, climb the leaderboards, and test your skills
+            against top players.</p>
+        </div>
+        <div class="feature-item" role="listitem">
+          <img src="/assets/videoIcon.png" alt="Watch Icon">
+          <h3>Watch</h3>
+          <p>Experience the action live. Follow top matches, learn from the best, and stay connected to the competitive
+            scene.</p>
+        </div>
+        <div class="feature-item" role="listitem">
+          <img src="/assets/trophyIcon.png" alt="Win Icon">
+          <h3>Win</h3>
+          <p>Earn rewards for your grind. Complete missions, climb the ranks, and get prizes for your performance.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- GAMES -->
+    <section class="section games-section fade-in-element">
+      <div class="games-header">
+        <h2 class="games-title">Explore your favourite games on Uni Games</h2>
+        <p class="games-subtitle">From CS2 and Overwatch 2 to other competitive titles, Uni Games brings players the
+          best
+          gaming experience across supported games.</p>
+      </div>
+      <div class="games-carousel-wrapper">
+        <div class="games-carousel">
+          <div class="games-track">
+            <div class="game-card"><img src="/assets/dota2.webp" alt="Dota 2"></div>
+            <div class="game-card"><img src="/assets/leagueoflegends.webp" alt="League of Legends"></div>
+            <div class="game-card"><img src="/assets/brawlstar.webp" alt="Brawl Stars"></div>
+            <div class="game-card"><img src="/assets/bgmi.webp" alt="PUBG Mobile"></div>
+            <div class="game-card"><img src="/assets/callofduty.webp" alt="Call of Duty"></div>
+            <div class="game-card"><img src="/assets/valorant.webp" alt="Valorant"></div>
+          </div>
+        </div>
+        <button class="carousel-nav-btn prev-btn"><i class="fas fa-chevron-left"></i></button>
+        <button class="carousel-nav-btn next-btn"><i class="fas fa-chevron-right"></i></button>
+      </div>
+      <div class="carousel-progress-bar">
+        <div id="carousel-progress"></div>
+      </div>
+    </section>
+
+    <!-- Tournaments -->
+    <section id="tournaments" class="section container fade-in-element" aria-labelledby="tournaments-heading">
+      <h2 id="tournaments-heading">
+        Tournaments
+      </h2>
+
+      <!-- Tournament Action Buttons -->
+      <div class="tournament-actions">
+        <a href="tournaments.html" class="btn btn-secondary tournament-btn">
+          <i class="fas fa-trophy"></i>
+          See All Tournaments
+        </a>
+      </div>
+
+      <div id="tournaments-grid" class="tournaments-grid">
+        <!-- Tournament cards will be injected here by JavaScript -->
+      </div>
+    </section>
+
+    <!-- NEWS -->
+    <section id="news" class="section news-section fade-in-element">
+      <h2 class="news-title">News</h2>
+      <div class="news-grid">
+        <a href="article1.html" class="news-card">
+          <img src="https://placehold.co/600x400/161329/F0F0F0?text=News+1" alt="News 1">
+          <div class="news-content">
+            <div>
+              <p class="news-meta"><span class="league-name">ESEA LEAGUE</span> - 11 SEPT 2024</p>
+              <h3>ZywOo's Origin Story: Unearthing the Stats from His Early Days</h3>
+              <p>From the moment he set foot in organised Counter-Strike, ZywOo was a force to be reckoned with.</p>
+            </div>
+          </div>
+        </a>
+        <a href="article2.html" class="news-card">
+          <img src="https://placehold.co/600x400/161329/F0F0F0?text=News+2" alt="News 2">
+          <div class="news-content">
+            <div>
+              <p class="news-meta"><span class="league-name">ESEA LEAGUE</span> - 9 SEPT 2024</p>
+              <h3>Faire Open divisions, Cast at ESL Pro League, Clear Your Weekend!</h3>
+              <p>Check out our latest updates for Season 55!</p>
+            </div>
+          </div>
+        </a>
+        <a href="article3.html" class="news-card">
+          <img src="https://placehold.co/600x400/161329/F0F0F0?text=News+3" alt="News 3">
+          <div class="news-content">
+            <div>
+              <p class="news-meta"><span class="league-name">ESEA LEAGUE</span> - 20 AUG 2024</p>
+              <h3>Does FACEIT matchmaking prepare you for official matches?</h3>
+              <p>We analyzed the average ELO at every level of the Counter-Strike ecosystem!</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section faq-section fade-in-element">
+      <h2 class="faq-title">Frequently Asked Questions</h2>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>What do I need to get started?</span>
+            <i class="fas fa-plus"></i>
+          </button>
+          <div class="faq-answer">
+            <p>All you need is an account and the game you want to compete in! Check the specific tournament rules for
+              any additional requirements, but generally, it's that simple to start your competitive journey.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>How are prizes awarded?</span>
+            <i class="fas fa-plus"></i>
+          </button>
+          <div class="faq-answer">
+            <p>Prizes are typically awarded within 7-14 business days after a tournament concludes and results are
+              verified. Winnings are sent via the payment method you have on file in your user account.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>What is the fair play policy?</span>
+            <i class="fas fa-plus"></i>
+          </button>
+          <div class="faq-answer">
+            <p>We have a zero-tolerance policy for cheating, hacking, or any form of unsportsmanlike conduct. All
+              players must adhere to our code of conduct, and we use advanced anti-cheat software to ensure a fair
+              playing field.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>Can I stream my matches?</span>
+            <i class="fas fa-plus"></i>
+          </button>
+          <div class="faq-answer">
+            <p>Absolutely! We encourage players to stream their matches. Just be sure to check the specific tournament
+              rules, as some events may have restrictions or require a stream delay.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-column footer-brand">
+          <a href="index.html" class="brand" style="display: flex; align-items: center; gap: 0.5rem;">
+            <img src="ug.png" alt="Uni Games" style="height: 80px; width: auto;">
+            Uni Games
+          </a>
+          <p>The ultimate destination for competitive gaming.</p>
+          <div class="social-links">
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="Youtube"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h4>Tournaments</h4>
+          <ul>
+            <li><a href="tournaments.html">Browse All</a></li>
+            <li><a href="tournaments.html?filter=live">Live Matches</a></li>
+            <li><a href="tournaments.html?filter=upcoming">Upcoming</a></li>
+            <li><a href="tournaments.html?filter=completed">Past Results</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Community</h4>
+          <ul>
+            <li><a href="#">Discord</a></li>
+            <li><a href="#">Forums</a></li>
+            <li><a href="#">Support</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 Uni Games. All rights reserved.</p>
+      </div>
+  </footer>
+
+  <script>
+
+    // Header scroll effect
+    // Scroll handler is now handled by initSmartNavbar() function
+    // Removed old scroll handler that was looking for non-existent .site-header
+
+    // API Configuration (Production)
+    const API_BASE_URL = 'https://t2-237c.onrender.com';
+
+    // API Functions (Page-specific)
+    async function fetchTournaments() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/tournaments`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        return result.data || [];
+      } catch (error) {
+        console.error('Error fetching tournaments:', error.message);
+        throw error; // Re-throw error so page doesn't load without data
+      }
+    }
+
+    async function populateAllSections() {
+      // Show section loader in tournaments grid
+      const grid = document.getElementById('tournaments-grid');
+      if (grid) {
+        grid.innerHTML = `
+          <div class="section-loader">
+            <div class="spinner"></div>
+            <p>Loading tournaments...</p>
+          </div>
+        `;
+      }
+
+      try {
+        const tournaments = await fetchTournaments();
+        populateTournamentsGrid(tournaments);
+      } catch (error) {
+        console.error('Error loading tournaments:', error);
+        // Keep showing the loading spinner - don't hide it or show error
+        // The loading spinner will continue spinning until tournaments load successfully
+      }
+    }
+
+    // Add retry function
+    function retryLoadTournaments() {
+      populateAllSections();
+    }
+
+
+
+    function populateTournamentsGrid(tournaments) {
+      const grid = document.getElementById('tournaments-grid');
+      if (!grid) return;
+      if (tournaments.length === 0) {
+        grid.innerHTML = '<p style="text-align: center; width: 100%;">No tournaments available.</p>';
+        return;
+      }
+
+      const limitedTournaments = tournaments.slice(0, 3);
+
+      grid.innerHTML = limitedTournaments.map(tournament => {
+        const finalPoster = tournament.posterImage || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1000';
+        const status = tournament.status || 'upcoming';
+        const statusText = status.replace(/_/g, ' ').toUpperCase();
+        const prizePool = tournament.prizePool ? `₹${tournament.prizePool.toLocaleString()}` : 'TBD';
+        const teams = `${tournament.participants?.length || 0}/${tournament.maxTeams}`;
+        const startDate = new Date(tournament.tournamentStart);
+        const endDate = new Date(tournament.tournamentEnd);
+        const durationDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+        const duration = durationDays === 1 ? '1 Day' : `${durationDays} Days`;
+
+        return `
+          <a href="tournament-details.html?slug=${tournament.slug}" class="tournament-card">
+            <div class="tournament-status-badge status-${status}">${statusText}</div>
+            <div class="tournament-image" style="background-image: url('${finalPoster}')"></div>
+            <div class="tournament-content">
+              <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem;">${tournament.title}</h3>
+              <div class="tournament-stats">
+                <div class="stat">
+                  <span class="stat-value">${prizePool}</span>
+                  <span class="stat-label">Prize Pool</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-value">${teams}</span>
+                  <span class="stat-label">Teams</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-value">${duration}</span>
+                  <span class="stat-label">Duration</span>
+                </div>
+              </div>
+            </div>
+          </a>
+        `;
+      }).join('');
+
+      // Add grid class
+      grid.classList.remove('single-card', 'two-cards', 'three-cards');
+      if (limitedTournaments.length === 1) grid.classList.add('single-card');
+      else if (limitedTournaments.length === 2) grid.classList.add('two-cards');
+      else grid.classList.add('three-cards');
+    }
+
+    // Smooth scroll for navigation links (Page-specific)
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Games Carousel
+    const track = document.querySelector('.games-track');
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+    const progress = document.getElementById('carousel-progress');
+    const cards = Array.from(track.children);
+    let cardWidth = 0;
+    let currentIndex = 0;
+
+    function getVisibleCards() {
+      if (window.innerWidth >= 1280) return 5;
+      if (window.innerWidth >= 1024) return 4;
+      if (window.innerWidth >= 768) return 3;
+      if (window.innerWidth >= 600) return 2;
+      return 1; // Show only 1 card on mobile screens
+    }
+
+    function updateCarousel() {
+      if (!track) return; // Guard clause
+      const visibleCards = getVisibleCards();
+      cardWidth = track.clientWidth / visibleCards;
+      track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+
+      const totalScrollableItems = cards.length - visibleCards;
+      const progressPercentage = totalScrollableItems > 0 ? (currentIndex / totalScrollableItems) * 100 : 0;
+      progress.style.width = `${progressPercentage}%`;
+
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex >= totalScrollableItems;
+    }
+
+    nextBtn.addEventListener('click', () => {
+      const visibleCards = getVisibleCards();
+      if (currentIndex < cards.length - visibleCards) {
+        currentIndex++;
+        updateCarousel();
+      }
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateCarousel();
+      }
+    });
+
+    window.addEventListener('resize', updateCarousel);
+
+    // FAQ Accordion
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+      const question = item.querySelector('.faq-question');
+      question.addEventListener('click', () => {
+        const currentlyActive = document.querySelector('.faq-item.active');
+        if (currentlyActive && currentlyActive !== item) {
+          currentlyActive.classList.remove('active');
+        }
+        item.classList.toggle('active');
+      });
+    });
+
+    // Scroll Animations
+    function animateOnScroll() {
+      const elements = document.querySelectorAll('.fade-in-element');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      elements.forEach(el => observer.observe(el));
+    }
+
+    window.addEventListener('load', () => {
+      // Hide main loader after 1.5 seconds regardless of backend status
+      setTimeout(() => {
+        const loader = document.getElementById('loader-wrapper');
+        if (loader) {
+          loader.classList.add('hidden');
+        }
+        document.body.classList.add('loaded');
+      }, 1500);
+
+      // Start loading tournaments (will show section loader)
+      populateAllSections();
+      
+      animateOnScroll();
+      updateCarousel();
+    });
+
+
+
+
+    // --- NAVBAR HELPER FUNCTIONS ---
+    function redirectToAuth(tab = 'register') {
+      const returnUrl = encodeURIComponent(window.location.href);
+      window.location.href = `auth.html?tab=${tab}&returnUrl=${returnUrl}`;
+    }
+
+    // Modern Navbar Functions
+    let isLoggedIn = false;
+
+    // Handle logout
+    function handleLogout() {
+      if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('nexus_session');
+        sessionStorage.removeItem('nexus_session');
+        window.location.href = 'auth.html';
+      }
+    }
+
+    // Smart Navbar Scroll Behavior
+    function initSmartNavbar() {
+      const navbar = document.querySelector('.nav-normal');
+      if (!navbar) return;
+
+      let lastScrollY = window.scrollY;
+      let ticking = false;
+
+      function updateNavbar() {
+        const currentScrollY = window.scrollY;
+
+        // Add scrolled class when user has scrolled down
+        if (currentScrollY > 50) {
+          navbar.classList.add('nav-scrolled');
+        } else {
+          navbar.classList.remove('nav-scrolled');
+        }
+
+        // Hide/show navbar based on scroll direction
+        if (currentScrollY > 100) { // Only start hiding after scrolling 100px
+          if (currentScrollY > lastScrollY && currentScrollY > 200) {
+            // Scrolling down - hide navbar
+            navbar.classList.add('nav-hidden');
+          } else {
+            // Scrolling up - show navbar
+            navbar.classList.remove('nav-hidden');
+          }
+        } else {
+          // Always show navbar when near top
+          navbar.classList.remove('nav-hidden');
+        }
+
+        lastScrollY = currentScrollY;
+        ticking = false;
+      }
+
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(updateNavbar);
+          ticking = true;
+        }
+      }
+
+      // Listen for scroll events
+      window.addEventListener('scroll', requestTick, { passive: true });
+
+      // Initial call
+      updateNavbar();
+    }
+
+    function getSessionData() {
+      const session = localStorage.getItem('nexus_session') || sessionStorage.getItem('nexus_session');
+      try {
+        return session ? JSON.parse(session) : null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function isAuthenticated() {
+      const sessionData = getSessionData();
+      return sessionData && sessionData.token && sessionData.user;
+    }
+
+    function getAuthToken() {
+      const sessionData = getSessionData();
+      return sessionData ? sessionData.token : null;
+    }
+
+    function requireAuthentication() {
+      if (!isAuthenticated()) {
+        const returnUrl = encodeURIComponent(window.location.href);
+        window.location.href = `auth.html?returnUrl=${returnUrl}`;
+        return false;
+      }
+      return true;
+    }
+
+    function logout() {
+      localStorage.removeItem('nexus_session');
+      sessionStorage.removeItem('nexus_session');
+      window.location.reload();
+    }
+
+    function checkUserAuthentication() {
+      const sessionData = getSessionData();
+      const guestMenu = document.getElementById('guest-menu');
+      const userMenu = document.getElementById('user-menu');
+      const user = sessionData?.user;
+
+      if (user) {
+        const username = user.username || user.email.split('@')[0];
+        const userInitials = username.substring(0, 2).toUpperCase();
+
+        // Update navbar elements
+        const navbarUsername = document.getElementById('navbar-username');
+        const userAvatar = document.getElementById('user-avatar');
+
+        if (navbarUsername) {
+          navbarUsername.textContent = username;
+        }
+
+        if (userAvatar) {
+          userAvatar.textContent = userInitials;
+        }
+
+        // Show user menu, hide guest menu
+        if (guestMenu) {
+          guestMenu.style.display = 'none';
+        }
+        if (userMenu) {
+          userMenu.style.display = 'flex';
+        }
+
+        isLoggedIn = true;
+      } else {
+        // Show guest menu, hide user menu
+        if (guestMenu) {
+          guestMenu.style.display = 'flex';
+        }
+        if (userMenu) {
+          userMenu.style.display = 'none';
+        }
+
+        isLoggedIn = false;
+      }
+    }
+
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function () {
+      // Initialize mobile menu toggle
+      const normalMenuToggle = document.getElementById('normalMenuToggle');
+      const normalNav = document.getElementById('normalNav');
+
+      if (normalMenuToggle && normalNav) {
+        normalMenuToggle.addEventListener('click', (e) => {
+          e.stopPropagation();
+          normalMenuToggle.classList.toggle('active');
+          normalNav.classList.toggle('active');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+          if (!e.target.closest('.nav-normal') && normalNav.classList.contains('active')) {
+            normalNav.classList.remove('active');
+            normalMenuToggle.classList.remove('active');
+          }
+        });
+      }
+
+      initSmartNavbar(); // Initialize smart scroll behavior
+
+      // Small delay to ensure all elements are ready
+      setTimeout(() => {
+        checkUserAuthentication(); // Check if user is logged in
+      }, 100);
+
+      // Also check authentication when page becomes visible (in case user comes back from auth)
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) {
+          setTimeout(() => {
+            checkUserAuthentication();
+          }, 100);
+        }
+      });
+    });
+
+    // Keep-alive functionality to prevent backend from sleeping
+    function keepBackendAlive() {
+      fetch('https://t2-237c.onrender.com/health')
+        .then(response => response.json())
+        .then(data => {
+        })
+        .catch(error => {
+        });
+    }
+
+    // Ping backend every 10 minutes (600,000 ms)
+    setInterval(keepBackendAlive, 600000);
+
+    // Initial ping after 30 seconds
+    setTimeout(keepBackendAlive, 30000);
+
+  </script>
+</body>
+
+</html>
